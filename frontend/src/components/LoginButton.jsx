@@ -1,5 +1,3 @@
-import React from "react";
-
 const LoginButton = ({ onClick, disabled = false }) => {
   return (
     <button
