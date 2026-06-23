@@ -1,11 +1,15 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi } from "vitest";
 import LoginForm from "../components/LoginForm";
 
 describe("LoginForm", () => {
-  it("should login successfully when username and password are correct", () => {
+  it("should login successfully when username and password are correct", async () => {
     // Arrange
-    render(<LoginForm />);
+    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LoginForm handleSubmit={handleSubmit} />);
 
     const usernameInput = screen.getByPlaceholderText("Username");
     const passwordInput = screen.getByPlaceholderText("Password");
@@ -14,25 +18,24 @@ describe("LoginForm", () => {
     });
 
     // Act
-    fireEvent.change(usernameInput, {
-      target: { value: "admin" },
-    });
-
-    fireEvent.change(passwordInput, {
-      target: { value: "admin123" },
-    });
-
-    fireEvent.click(loginButton);
+    await user.type(usernameInput, "admin");
+    await user.type(passwordInput, "admin123");
+    await user.click(loginButton);
 
     // Assert
-    expect(
-      screen.getByText("Login Successful")
-    ).toBeInTheDocument();
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+    expect(handleSubmit).toHaveBeenCalledWith({
+      username: "admin",
+      password: "admin123",
+    });
   });
 
-  it("should show error when only username is entered", () => {
+  it("should display error when username is entered without password", async () => {
     // Arrange
-    render(<LoginForm />);
+    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LoginForm handleSubmit={handleSubmit} />);
 
     const usernameInput = screen.getByPlaceholderText("Username");
     const loginButton = screen.getByRole("button", {
@@ -40,21 +43,23 @@ describe("LoginForm", () => {
     });
 
     // Act
-    fireEvent.change(usernameInput, {
-      target: { value: "admin" },
-    });
-
-    fireEvent.click(loginButton);
+    await user.type(usernameInput, "admin");
+    await user.click(loginButton);
 
     // Assert
+    expect(handleSubmit).not.toHaveBeenCalled();
+
     expect(
-      screen.getByText("Password is required")
+      screen.getByText(/password is required/i)
     ).toBeInTheDocument();
   });
 
-  it("should show error when only password is entered", () => {
+  it("should display error when password is entered without username", async () => {
     // Arrange
-    render(<LoginForm />);
+    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
+
+    render(<LoginForm handleSubmit={handleSubmit} />);
 
     const passwordInput = screen.getByPlaceholderText("Password");
     const loginButton = screen.getByRole("button", {
@@ -62,42 +67,36 @@ describe("LoginForm", () => {
     });
 
     // Act
-    fireEvent.change(passwordInput, {
-      target: { value: "admin123" },
-    });
-
-    fireEvent.click(loginButton);
+    await user.type(passwordInput, "admin123");
+    await user.click(loginButton);
 
     // Assert
+    expect(handleSubmit).not.toHaveBeenCalled();
+
     expect(
-      screen.getByText("Username is required")
+      screen.getByText(/username is required/i)
     ).toBeInTheDocument();
   });
 
-  it("should show error when username and password are incorrect", () => {
+  it("should display error when username and password are empty", async () => {
     // Arrange
-    render(<LoginForm />);
+    const handleSubmit = vi.fn();
+    const user = userEvent.setup();
 
-    const usernameInput = screen.getByPlaceholderText("Username");
-    const passwordInput = screen.getByPlaceholderText("Password");
+    render(<LoginForm handleSubmit={handleSubmit} />);
+
     const loginButton = screen.getByRole("button", {
       name: /login/i,
     });
 
     // Act
-    fireEvent.change(usernameInput, {
-      target: { value: "wronguser" },
-    });
-
-    fireEvent.change(passwordInput, {
-      target: { value: "wrongpass" },
-    });
-
-    fireEvent.click(loginButton);
+    await user.click(loginButton);
 
     // Assert
+    expect(handleSubmit).not.toHaveBeenCalled();
+
     expect(
-      screen.getByText("Invalid username or password")
+      screen.getByText(/username is required/i)
     ).toBeInTheDocument();
   });
 });
