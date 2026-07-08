@@ -5,55 +5,76 @@ import {
   it,
 } from "vitest";
 
+
 import {
   loginUser,
   logoutUser,
   clearSession,
-} from "/services/AuthService.js";
+} from "../services/AuthService.js";
 
-describe("Logout Service", () => {
+describe(
+  "Logout Service",
+  () => {
 
-  beforeEach(() => {
+    beforeEach(() => {
 
-    clearSession();
+      clearSession();
 
-  });
-
-  it("It should logout successfully.", async () => {
-
-    // Arrange
-
-    await loginUser({
-      email: "admin@gmail.com",
-      password: "password123",
     });
 
-    // Act
 
-    const result =
-      await logoutUser();
+    it(
+      "It should logout successfully.",
+      async()=>{
 
-    // Assert
+        // Arrange
 
-    expect(result.message)
-      .toBe("Logout successful.");
+        await loginUser({
 
-  });
+          email:
+            "admin@gmail.com",
 
-  it("It should throw an error when no session exists.", async () => {
+          password:
+            "admin123",
 
-    // Arrange
+        });
 
-    clearSession();
+        // Act
 
-    // Act & Assert
+        const result =
+          await logoutUser();
 
-    await expect(
-      logoutUser()
-    ).rejects.toThrow(
-      "No active session."
+        // Assert
+
+        expect(result.message)
+          .toBe(
+            "Logout successful."
+          );
+
+      }
     );
 
-  });
 
-});
+    it(
+      "It should throw an error when there is no active session.",
+      async()=>{
+
+        // Arrange
+
+        clearSession();
+
+        // Act + Assert
+
+        await expect(
+          logoutUser()
+        )
+        .rejects
+        .toThrow(
+          "No active session."
+        );
+
+      }
+    );
+
+  }
+);

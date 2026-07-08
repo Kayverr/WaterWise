@@ -8,82 +8,115 @@ import {
 import {
   loginUser,
   clearSession,
-} from "/services/AuthService.js";
+} from "../services/AuthService.js";
 
-describe("Login Service", () => {
+describe(
+  "Login Service",
+  () => {
 
-  beforeEach(() => {
+    beforeEach(() => {
 
-    clearSession();
+      clearSession();
 
-  });
+    });
 
-  it("It should login successfully using valid credentials.", async () => {
 
-    // Arrange
+    it(
+      "It should login successfully using valid credentials.",
+      async()=>{
 
-    const credentials = {
-      email: "admin@gmail.com",
-      password: "password123",
-    };
+        // Arrange
 
-    // Act
+        const credentials = {
 
-    const result =
-      await loginUser(credentials);
+          email:
+            "admin@gmail.com",
 
-    // Assert
+          password:
+            "admin123",
 
-    expect(result.message)
-      .toBe("Login successful.");
+        };
 
-    expect(result.user.email)
-      .toBe("admin@gmail.com");
+        // Act
 
-    expect(result.user.role)
-      .toBe("Admin");
+        const result =
+          await loginUser(
+            credentials
+          );
 
-    expect(result.user.isAuthenticated)
-      .toBe(true);
+        // Assert
 
-  });
+        expect(result.email)
+          .toBe(
+            "admin@gmail.com"
+          );
 
-  it("It should throw an error for an invalid email.", async () => {
+        expect(result.role)
+          .toBe(
+            "admin"
+          );
 
-    // Arrange
-
-    const credentials = {
-      email: "unknown@gmail.com",
-      password: "password123",
-    };
-
-    // Act & Assert
-
-    await expect(
-      loginUser(credentials)
-    ).rejects.toThrow(
-      "Invalid email or password."
+      }
     );
 
-  });
+    it(
+      "It should throw an error for invalid email.",
+      async()=>{
 
-  it("It should throw an error for an invalid password.", async () => {
 
-    // Arrange
+        // Arrange
 
-    const credentials = {
-      email: "admin@gmail.com",
-      password: "wrongpassword",
-    };
+        const credentials = {
 
-    // Act & Assert
+          email:
+            "wrong@gmail.com",
 
-    await expect(
-      loginUser(credentials)
-    ).rejects.toThrow(
-      "Invalid email or password."
+          password:
+            "admin123",
+
+        };
+
+        // Act + Assert
+
+        await expect(
+          loginUser(credentials)
+        )
+        .rejects
+        .toThrow(
+          "Invalid email or password."
+        );
+
+      }
     );
 
-  });
+    it(
+      "It should throw an error for invalid password.",
+      async()=>{
 
-});
+        // Arrange
+
+        const credentials = {
+
+          email:
+            "admin@gmail.com",
+
+          password:
+            "wrongpassword",
+
+        };
+
+        // Act + Assert
+
+        await expect(
+          loginUser(credentials)
+        )
+        .rejects
+        .toThrow(
+          "Invalid email or password."
+        );
+
+      }
+    );
+
+  }
+);

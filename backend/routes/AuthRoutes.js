@@ -10,20 +10,13 @@ import {
   authenticate,
 } from "../middleware/AuthMiddleware.js";
 
-const router = express.Router();
-
-/**
- * Public Routes
- */
+const router =
+  express.Router();
 
 router.post(
   "/login",
   login
 );
-
-/**
- * Protected Routes
- */
 
 router.post(
   "/logout",
@@ -36,5 +29,6 @@ router.get(
   authenticate,
   currentUser
 );
+
 
 export default router;

@@ -4,76 +4,121 @@ import {
   getCurrentUser,
 } from "../services/AuthService.js";
 
-/**
- * Login Controller
- */
-export const login = async (req, res) => {
+export const login = async (
+  req,
+  res
+) => {
+
 
   try {
 
-    const result = await loginUser(req.body);
 
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-      user: result.user,
-    });
+    const user =
+      await loginUser(
+        req.body
+      );
 
-  } catch (error) {
 
-    return res.status(401).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(200).json({
 
-  }
+      success:true,
 
-};
+      message:
+        "Login successful.",
 
-/**
- * Logout Controller
- */
-export const logout = async (req, res) => {
-
-  try {
-
-    const result = await logoutUser();
-
-    return res.status(200).json({
-      success: true,
-      message: result.message,
-    });
-
-  } catch (error) {
-
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
-
-  }
-
-};
-
-/**
- * Current User Controller
- */
-export const currentUser = async (req, res) => {
-
-  try {
-
-    const user = await getCurrentUser();
-
-    return res.status(200).json({
-      success: true,
       user,
+
     });
 
-  } catch (error) {
 
-    return res.status(401).json({
-      success: false,
-      message: error.message,
+  } catch(error) {
+
+
+    res.status(401).json({
+
+      success:false,
+
+      message:
+        error.message,
+
+    });
+
+  }
+
+};
+
+
+export const logout = async (
+  req,
+  res
+) => {
+
+
+  try {
+
+
+    const result =
+      await logoutUser();
+
+
+    res.status(200).json({
+
+      success:true,
+
+      message:
+        result.message,
+
+    });
+
+
+  } catch(error) {
+
+
+    res.status(400).json({
+
+      success:false,
+
+      message:
+        error.message,
+
+    });
+
+  }
+
+};
+
+
+export const currentUser = async (
+  req,
+  res
+) => {
+
+
+  try {
+
+
+    const user =
+      await getCurrentUser();
+
+
+    res.status(200).json({
+
+      success:true,
+
+      user,
+
+    });
+
+
+  } catch(error) {
+
+    res.status(401).json({
+
+      success:false,
+
+      message:
+        error.message,
+
     });
 
   }

@@ -1,39 +1,31 @@
 import {
   isAuthenticated,
-  getCurrentUser,
 } from "../services/AuthService.js";
 
-/**
- * Authentication Middleware
- */
-export const authenticate = async (
+
+export const authenticate = (
   req,
   res,
   next
 ) => {
 
-  try {
 
-    if (!isAuthenticated()) {
+  if (!isAuthenticated()) {
 
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized.",
-      });
-
-    }
-
-    req.user = await getCurrentUser();
-
-    next();
-
-  } catch (error) {
 
     return res.status(401).json({
-      success: false,
-      message: error.message,
+
+      success:false,
+
+      message:
+        "Unauthorized."
+
     });
 
+
   }
+
+
+  next();
 
 };
