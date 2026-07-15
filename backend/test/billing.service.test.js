@@ -53,6 +53,87 @@ describe("Billing Service", () => {
           });
         }
       );
+
+      it(
+        "should calculate zero consumption",
+        () => {
+          // Arrange
+
+          // Act
+          const result =
+            calculateBillingAmount(
+              100,
+              100
+            );
+
+          // Assert
+          expect(
+            result.cubic_used
+          ).toBe(0);
+
+          expect(
+            result.current_bill
+          ).toBe(0);
+
+          expect(
+            result.total_bill
+          ).toBe(0);
+        }
+      );
+
+      it(
+        "should calculate billing amount for large consumption",
+        () => {
+          // Arrange
+
+          // Act
+          const result =
+            calculateBillingAmount(
+              100,
+              300
+            );
+
+          // Assert
+          expect(
+            result.cubic_used
+          ).toBe(200);
+
+          expect(
+            result.current_bill
+          ).toBeGreaterThan(0);
+
+          expect(
+            result.total_bill
+          ).toBeGreaterThan(0);
+        }
+      );
+
+      it(
+        "should return numeric billing values",
+        () => {
+          // Arrange
+
+          // Act
+          const result =
+            calculateBillingAmount(
+              100,
+              120
+            );
+
+          // Assert
+          expect(
+            typeof result.current_bill
+          ).toBe("number");
+
+          expect(
+            typeof result.total_bill
+          ).toBe("number");
+
+          expect(
+            typeof result.cubic_used
+          ).toBe("number");
+        }
+      );
     }
   );
 
@@ -122,6 +203,85 @@ describe("Billing Service", () => {
           expect(
             result.status
           ).toBe("Unpaid");
+        }
+      );
+
+      it(
+        "should calculate cubic usage before inserting",
+        () => {
+          // Arrange
+          billingModel.insertBillingRecord.mockImplementation(
+            (record) => record
+          );
+
+          // Act
+          const result =
+            generateBillingRecord({
+              previous_reading: 50,
+              present_reading: 70,
+            });
+
+          // Assert
+          expect(
+            result.cubic_used
+          ).toBe(20);
+        }
+      );
+
+      it(
+        "should initialize payment fields",
+        () => {
+          // Arrange
+          billingModel.insertBillingRecord.mockImplementation(
+            (record) => record
+          );
+
+          // Act
+          const result =
+            generateBillingRecord({
+              previous_reading: 10,
+              present_reading: 20,
+            });
+
+          // Assert
+          expect(
+            result.payment_1
+          ).toBe(0);
+
+          expect(
+            result.payment_2
+          ).toBe(0);
+
+          expect(
+            result.payment_total
+          ).toBe(0);
+
+          expect(
+            result.remaining_balance
+          ).toBe(
+            result.total_bill
+          );
+        }
+      );
+
+      it(
+        "should call insertBillingRecord once",
+        () => {
+          // Arrange
+          billingModel.insertBillingRecord.mockImplementation(
+            (record) => record
+          );
+
+          // Act
+          generateBillingRecord({
+            previous_reading: 1,
+            present_reading: 2,
+          });
+
+          // Assert
+          expect(
+            billingModel.insertBillingRecord
+          ).toHaveBeenCalledOnce();
         }
       );
     }
@@ -217,6 +377,156 @@ describe("Billing Service", () => {
       );
 
       it(
+        "should call updateBillingRecord when payment is processed",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 300,
+              payment_1: 0,
+              payment_2: 0,
+              payment_total: 0,
+              remaining_balance: 300,
+            }
+          );
+
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) =>
+              updated
+          );
+
+          // Act
+          processPayment(
+            1,
+            100
+          );
+
+          // Assert
+          expect(
+            billingModel.updateBillingRecord
+          ).toHaveBeenCalledOnce();
+        }
+      );
+
+            it(
+        "should update payment_1 on the first payment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 300,
+              payment_1: 0,
+              payment_2: 0,
+              payment_total: 0,
+              remaining_balance: 300,
+            }
+          );
+
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) => updated
+          );
+
+          // Act
+          const result =
+            processPayment(
+              1,
+              50
+            );
+
+          // Assert
+          expect(
+            result.payment_1
+          ).toBe(50);
+
+          expect(
+            result.payment_2
+          ).toBe(0);
+        }
+      );
+
+      it(
+        "should update payment_2 on the second payment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 300,
+              payment_1: 100,
+              payment_2: 0,
+              payment_total: 100,
+              remaining_balance: 200,
+            }
+          );
+
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) => updated
+          );
+
+          // Act
+          const result =
+            processPayment(
+              1,
+              50
+            );
+
+          // Assert
+          expect(
+            result.payment_2
+          ).toBe(50);
+
+          expect(
+            result.payment_total
+          ).toBe(150);
+
+          expect(
+            result.remaining_balance
+          ).toBe(150);
+        }
+      );
+
+      it(
+        "should keep remaining balance after partial payment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 500,
+              payment_1: 0,
+              payment_2: 0,
+              payment_total: 0,
+              remaining_balance: 500,
+            }
+          );
+
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) => updated
+          );
+
+          // Act
+          const result =
+            processPayment(
+              1,
+              250
+            );
+
+          // Assert
+          expect(
+            result.remaining_balance
+          ).toBe(250);
+
+          expect(
+            result.status
+          ).toBe(
+            "Partially Paid"
+          );
+        }
+      );
+
+      it(
         "should throw an error when billing record does not exist",
         () => {
           // Arrange
@@ -242,6 +552,7 @@ describe("Billing Service", () => {
           // Arrange
           billingModel.fetchBillingRecordById.mockReturnValue(
             {
+              id: 1,
               remaining_balance: 200,
             }
           );
@@ -294,6 +605,43 @@ describe("Billing Service", () => {
           ).toHaveLength(2);
         }
       );
+
+      it(
+        "should return an empty array when no billing records exist",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecords.mockReturnValue(
+            []
+          );
+
+          // Act
+          const result =
+            fetchAllBilling();
+
+          // Assert
+          expect(
+            result
+          ).toEqual([]);
+        }
+      );
+
+      it(
+        "should call fetchBillingRecords once",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecords.mockReturnValue(
+            []
+          );
+
+          // Act
+          fetchAllBilling();
+
+          // Assert
+          expect(
+            billingModel.fetchBillingRecords
+          ).toHaveBeenCalledOnce();
+        }
+      );
     }
   );
 
@@ -312,7 +660,9 @@ describe("Billing Service", () => {
 
           // Act
           const result =
-            fetchBilling(1);
+            fetchBilling(
+              1
+            );
 
           // Assert
           expect(
@@ -324,6 +674,47 @@ describe("Billing Service", () => {
           expect(
             result.id
           ).toBe(1);
+        }
+      );
+
+      it(
+        "should return undefined when billing record does not exist",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            undefined
+          );
+
+          // Act
+          const result =
+            fetchBilling(
+              999
+            );
+
+          // Assert
+          expect(
+            result
+          ).toBeUndefined();
+        }
+      );
+
+      it(
+        "should call fetchBillingRecordById once",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {}
+          );
+
+          // Act
+          fetchBilling(
+            1
+          );
+
+          // Assert
+          expect(
+            billingModel.fetchBillingRecordById
+          ).toHaveBeenCalledOnce();
         }
       );
     }
