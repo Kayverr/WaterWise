@@ -16,86 +16,151 @@ import {
 } from "../models/payment.model.js";
 
 describe("Payment Model", () => {
-  const originalPayments = structuredClone(
-    paymentTransactions
-  );
+  const originalPayments =
+    structuredClone(
+      paymentTransactions
+    );
 
   beforeEach(() => {
     paymentTransactions.length = 0;
+
     paymentTransactions.push(
-      ...structuredClone(originalPayments)
+      ...structuredClone(
+        originalPayments
+      )
     );
   });
 
-  it("should fetch all payment transactions", () => {
-    // Arrange
+  describe(
+    "fetchPayments",
+    () => {
+      it(
+        "should fetch all payment transactions",
+        () => {
+          // Arrange
 
-    // Act
-    const result = fetchPayments();
+          // Act
+          const result =
+            fetchPayments();
 
-    // Assert
-    expect(result).toHaveLength(
-      originalPayments.length
-    );
-  });
+          // Assert
+          expect(
+            result
+          ).toHaveLength(
+            originalPayments.length
+          );
+        }
+      );
+    }
+  );
 
-  it("should fetch a payment by payment ID", () => {
-    // Arrange
-    const paymentId = "PAY-001";
+  describe(
+    "fetchPaymentById",
+    () => {
+      it(
+        "should fetch a payment by payment ID",
+        () => {
+          // Arrange
+          const paymentId =
+            "PAY-001";
 
-    // Act
-    const result =
-      fetchPaymentById(paymentId);
+          // Act
+          const result =
+            fetchPaymentById(
+              paymentId
+            );
 
-    // Assert
-    expect(result).toBeDefined();
-    expect(result.paymentId).toBe(
-      paymentId
-    );
-  });
+          // Assert
+          expect(
+            result
+          ).toBeDefined();
 
-  it("should return undefined for an unknown payment ID", () => {
-    // Arrange
+          expect(
+            result.paymentId
+          ).toBe(
+            paymentId
+          );
+        }
+      );
 
-    // Act
-    const result =
-      fetchPaymentById("INVALID");
+      it(
+        "should return undefined for an unknown payment ID",
+        () => {
+          // Arrange
 
-    // Assert
-    expect(result).toBeUndefined();
-  });
+          // Act
+          const result =
+            fetchPaymentById(
+              "INVALID"
+            );
 
-  it("should create a new payment transaction", () => {
-    // Arrange
-    const newPayment = {
-      paymentId: "PAY-999",
-      invoiceNumber: "INV-2026-999",
-      consumerName:
-        "Test Consumer",
-      paymentDate: "2026-09-30",
-      paymentMethod: "Cash",
-      amountPaid: 1000,
-      remainingBalance: 0,
-      paymentStatus: "Paid",
-    };
+          // Assert
+          expect(
+            result
+          ).toBeUndefined();
+        }
+      );
+    }
+  );
 
-    // Act
-    const created =
-      createPayment(newPayment);
+  describe(
+    "createPayment",
+    () => {
+      it(
+        "should create a new payment transaction",
+        () => {
+          // Arrange
+          const newPayment = {
+            paymentId:
+              "PAY-999",
 
-    // Assert
-    expect(created).toEqual(
-      newPayment
-    );
+            invoiceNumber:
+              "INV-2026-999",
 
-    expect(
-      paymentTransactions
-    ).toContainEqual(newPayment);
+            consumerName:
+              "Test Consumer",
 
-    expect(
-      paymentTransactions
-    ).toHaveLength(
-      originalPayments.length + 1
-    );
-  });
+            paymentDate:
+              "2026-09-30",
+
+            paymentMethod:
+              "Cash",
+
+            amountPaid: 1000,
+
+            remainingBalance: 0,
+
+            paymentStatus:
+              "Paid",
+          };
+
+          // Act
+          const created =
+            createPayment(
+              newPayment
+            );
+
+          // Assert
+          expect(
+            created
+          ).toEqual(
+            newPayment
+          );
+
+          expect(
+            paymentTransactions
+          ).toContainEqual(
+            newPayment
+          );
+
+          expect(
+            paymentTransactions
+          ).toHaveLength(
+            originalPayments.length +
+              1
+          );
+        }
+      );
+    }
+  );
 });

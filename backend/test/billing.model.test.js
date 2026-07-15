@@ -28,182 +28,271 @@ describe("Billing Model", () => {
     );
   });
 
-  it("should fetch all billing records", () => {
-    // Arrange
+  describe(
+    "fetchBillingRecords",
+    () => {
+      it(
+        "should fetch all billing records",
+        () => {
+          // Arrange
 
-    // Act
-    const result =
-      fetchBillingRecords();
+          // Act
+          const result =
+            fetchBillingRecords();
 
-    // Assert
-    expect(result).toHaveLength(
-      originalRecords.length
-    );
-  });
-
-  it("should fetch a billing record by ID", () => {
-    // Arrange
-    const id = 1;
-
-    // Act
-    const result =
-      fetchBillingRecordById(id);
-
-    // Assert
-    expect(result).toBeDefined();
-    expect(result.id).toBe(id);
-  });
-
-  it("should fetch a billing record by user ID", () => {
-    // Arrange
-    const userId = 101;
-
-    // Act
-    const result =
-      fetchBillingRecordByUserId(
-        userId
+          // Assert
+          expect(result).toHaveLength(
+            originalRecords.length
+          );
+        }
       );
+    }
+  );
 
-    // Assert
-    expect(result).toBeDefined();
-    expect(result.user_id).toBe(
-      userId
-    );
-  });
+  describe(
+    "fetchBillingRecordById",
+    () => {
+      it(
+        "should fetch a billing record by ID",
+        () => {
+          // Arrange
+          const id = 1;
 
-  it("should insert a billing record", () => {
-    // Arrange
-    const newRecord = {
-      user_id: 999,
-      name: "Test Consumer",
+          // Act
+          const result =
+            fetchBillingRecordById(id);
 
-      previous_reading: 100,
-      present_reading: 120,
+          // Assert
+          expect(
+            result
+          ).toBeDefined();
 
-      cubic_used: 20,
-      cubic_used_last_month: 18,
-
-      current_bill: 300,
-      total_bill: 300,
-
-      payment_1: 0,
-      payment_2: 0,
-      payment_total: 0,
-
-      remaining_balance: 300,
-
-      billing_date: "2025-05-01",
-      due_date: "2025-05-15",
-
-      status: "Unpaid",
-
-      created_at:
-        "2025-05-01T08:00:00Z",
-
-      payment_1_date: null,
-      payment_2_date: null,
-
-      reference_code:
-        "REF-TEST-001",
-    };
-
-    // Act
-    const result =
-      insertBillingRecord(
-        newRecord
+          expect(result.id).toBe(id);
+        }
       );
+    }
+  );
 
-    // Assert
-    expect(result.id).toBeDefined();
+  describe(
+    "fetchBillingRecordByUserId",
+    () => {
+      it(
+        "should fetch a billing record by user ID",
+        () => {
+          // Arrange
+          const userId = 101;
 
-    expect(result.user_id).toBe(
-      999
-    );
+          // Act
+          const result =
+            fetchBillingRecordByUserId(
+              userId
+            );
 
-    expect(result.name).toBe(
-      "Test Consumer"
-    );
+          // Assert
+          expect(
+            result
+          ).toBeDefined();
 
-    expect(
-      mockBillingData
-    ).toContainEqual(result);
+          expect(
+            result.user_id
+          ).toBe(userId);
+        }
+      );
+    }
+  );
 
-    expect(
-      mockBillingData
-    ).toHaveLength(
-      originalRecords.length + 1
-    );
-  });
+  describe(
+    "insertBillingRecord",
+    () => {
+      it(
+        "should insert a billing record",
+        () => {
+          // Arrange
+          const newRecord = {
+            user_id: 999,
+            name:
+              "Test Consumer",
 
-  it("should update a billing record", () => {
-    // Arrange
-    const id = 1;
+            previous_reading: 100,
+            present_reading: 120,
 
-    // Act
-    const result =
-      updateBillingRecord(id, {
-        status: "Paid",
-        remaining_balance: 0,
-      });
+            cubic_used: 20,
+            cubic_used_last_month: 18,
 
-    // Assert
-    expect(result).not.toBeNull();
+            current_bill: 300,
+            total_bill: 300,
 
-    expect(result.status).toBe(
-      "Paid"
-    );
+            payment_1: 0,
+            payment_2: 0,
+            payment_total: 0,
 
-    expect(
-      result.remaining_balance
-    ).toBe(0);
-  });
+            remaining_balance: 300,
 
-  it("should return null when updating a non-existing billing record", () => {
-    // Arrange
+            billing_date:
+              "2025-05-01",
 
-    // Act
-    const result =
-      updateBillingRecord(
-        9999,
-        {
-          status: "Paid",
+            due_date:
+              "2025-05-15",
+
+            status: "Unpaid",
+
+            created_at:
+              "2025-05-01T08:00:00Z",
+
+            payment_1_date: null,
+            payment_2_date: null,
+
+            reference_code:
+              "REF-TEST-001",
+          };
+
+          // Act
+          const result =
+            insertBillingRecord(
+              newRecord
+            );
+
+          // Assert
+          expect(
+            result.id
+          ).toBeDefined();
+
+          expect(
+            result.user_id
+          ).toBe(999);
+
+          expect(
+            result.name
+          ).toBe(
+            "Test Consumer"
+          );
+
+          expect(
+            mockBillingData
+          ).toContainEqual(
+            result
+          );
+
+          expect(
+            mockBillingData
+          ).toHaveLength(
+            originalRecords.length +
+              1
+          );
+        }
+      );
+    }
+  );
+
+  describe(
+    "updateBillingRecord",
+    () => {
+      it(
+        "should update a billing record",
+        () => {
+          // Arrange
+          const id = 1;
+
+          // Act
+          const result =
+            updateBillingRecord(
+              id,
+              {
+                status: "Paid",
+                remaining_balance: 0,
+              }
+            );
+
+          // Assert
+          expect(
+            result
+          ).not.toBeNull();
+
+          expect(
+            result.status
+          ).toBe("Paid");
+
+          expect(
+            result.remaining_balance
+          ).toBe(0);
         }
       );
 
-    // Assert
-    expect(result).toBeNull();
-  });
+      it(
+        "should return null when updating a non-existing billing record",
+        () => {
+          // Arrange
 
-  it("should remove a billing record", () => {
-    // Arrange
-    const id = 1;
+          // Act
+          const result =
+            updateBillingRecord(
+              9999,
+              {
+                status: "Paid",
+              }
+            );
 
-    // Act
-    const deleted =
-      removeBillingRecord(id);
+          // Assert
+          expect(
+            result
+          ).toBeNull();
+        }
+      );
+    }
+  );
 
-    // Assert
-    expect(deleted).toBe(true);
+  describe(
+    "removeBillingRecord",
+    () => {
+      it(
+        "should remove a billing record",
+        () => {
+          // Arrange
+          const id = 1;
 
-    expect(
-      fetchBillingRecordById(id)
-    ).toBeUndefined();
+          // Act
+          const deleted =
+            removeBillingRecord(
+              id
+            );
 
-    expect(
-      mockBillingData
-    ).toHaveLength(
-      originalRecords.length - 1
-    );
-  });
+          // Assert
+          expect(
+            deleted
+          ).toBe(true);
 
-  it("should return false when removing a non-existing billing record", () => {
-    // Arrange
+          expect(
+            fetchBillingRecordById(
+              id
+            )
+          ).toBeUndefined();
 
-    // Act
-    const deleted =
-      removeBillingRecord(9999);
+          expect(
+            mockBillingData
+          ).toHaveLength(
+            originalRecords.length -
+              1
+          );
+        }
+      );
 
-    // Assert
-    expect(deleted).toBe(false);
-  });
+      it(
+        "should return false when removing a non-existing billing record",
+        () => {
+          // Arrange
+
+          // Act
+          const deleted =
+            removeBillingRecord(
+              9999
+            );
+
+          // Assert
+          expect(
+            deleted
+          ).toBe(false);
+        }
+      );
+    }
+  );
 });

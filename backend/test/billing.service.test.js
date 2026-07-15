@@ -28,203 +28,304 @@ describe("Billing Service", () => {
     vi.clearAllMocks();
   });
 
-  it("should calculate billing amount correctly", () => {
-    // Arrange
-    const previousReading = 100;
-    const presentReading = 120;
+  describe(
+    "calculateBillingAmount",
+    () => {
+      it(
+        "should calculate billing amount correctly",
+        () => {
+          // Arrange
+          const previousReading = 100;
+          const presentReading = 120;
 
-    // Act
-    const result = calculateBillingAmount(
-      previousReading,
-      presentReading
-    );
+          // Act
+          const result =
+            calculateBillingAmount(
+              previousReading,
+              presentReading
+            );
 
-    // Assert
-    expect(result).toEqual({
-      cubic_used: 20,
-      current_bill: 300,
-      total_bill: 300,
-    });
-  });
+          // Assert
+          expect(result).toEqual({
+            cubic_used: 20,
+            current_bill: 300,
+            total_bill: 300,
+          });
+        }
+      );
+    }
+  );
 
-  it("should generate a billing record", () => {
-    // Arrange
-    billingModel.insertBillingRecord.mockImplementation(
-      (record) => record
-    );
+  describe(
+    "generateBillingRecord",
+    () => {
+      it(
+        "should generate a billing record",
+        () => {
+          // Arrange
+          billingModel.insertBillingRecord.mockImplementation(
+            (record) => record
+          );
 
-    const billing = {
-      id: 10,
-      user_id: 200,
-      name: "Juan Dela Cruz",
-      previous_reading: 100,
-      present_reading: 120,
-      billing_date: "2025-06-01",
-      due_date: "2025-06-15",
-    };
+          const billing = {
+            id: 10,
+            user_id: 200,
+            name:
+              "Juan Dela Cruz",
+            previous_reading: 100,
+            present_reading: 120,
+            billing_date:
+              "2025-06-01",
+            due_date:
+              "2025-06-15",
+          };
 
-    // Act
-    const result =
-      generateBillingRecord(billing);
+          // Act
+          const result =
+            generateBillingRecord(
+              billing
+            );
 
-    // Assert
-    expect(
-      billingModel.insertBillingRecord
-    ).toHaveBeenCalledTimes(1);
+          // Assert
+          expect(
+            billingModel.insertBillingRecord
+          ).toHaveBeenCalledTimes(
+            1
+          );
 
-    expect(result.id).toBe(10);
-    expect(result.name).toBe(
-      "Juan Dela Cruz"
-    );
-    expect(result.cubic_used).toBe(20);
-    expect(result.current_bill).toBe(
-      300
-    );
-    expect(result.total_bill).toBe(
-      300
-    );
-    expect(
-      result.remaining_balance
-    ).toBe(300);
-    expect(result.status).toBe(
-      "Unpaid"
-    );
-  });
+          expect(
+            result.id
+          ).toBe(10);
 
-  it("should process a full payment", () => {
-    // Arrange
-    billingModel.fetchBillingRecordById.mockReturnValue(
-      {
-        id: 1,
-        total_bill: 300,
-        payment_1: 0,
-        payment_2: 0,
-        payment_total: 0,
-        remaining_balance: 300,
-      }
-    );
+          expect(
+            result.name
+          ).toBe(
+            "Juan Dela Cruz"
+          );
 
-    billingModel.updateBillingRecord.mockImplementation(
-      (_, updated) => updated
-    );
+          expect(
+            result.cubic_used
+          ).toBe(20);
 
-    // Act
-    const result =
-      processPayment(1, 300);
+          expect(
+            result.current_bill
+          ).toBe(300);
 
-    // Assert
-    expect(result.status).toBe(
-      "Paid"
-    );
-    expect(
-      result.remaining_balance
-    ).toBe(0);
-    expect(
-      result.payment_total
-    ).toBe(300);
-  });
+          expect(
+            result.total_bill
+          ).toBe(300);
 
-  it("should process a partial payment", () => {
-    // Arrange
-    billingModel.fetchBillingRecordById.mockReturnValue(
-      {
-        id: 1,
-        total_bill: 300,
-        payment_1: 0,
-        payment_2: 0,
-        payment_total: 0,
-        remaining_balance: 300,
-      }
-    );
+          expect(
+            result.remaining_balance
+          ).toBe(300);
 
-    billingModel.updateBillingRecord.mockImplementation(
-      (_, updated) => updated
-    );
+          expect(
+            result.status
+          ).toBe("Unpaid");
+        }
+      );
+    }
+  );
 
-    // Act
-    const result =
-      processPayment(1, 100);
+  describe(
+    "processPayment",
+    () => {
+      it(
+        "should process a full payment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 300,
+              payment_1: 0,
+              payment_2: 0,
+              payment_total: 0,
+              remaining_balance: 300,
+            }
+          );
 
-    // Assert
-    expect(result.status).toBe(
-      "Partially Paid"
-    );
-    expect(
-      result.remaining_balance
-    ).toBe(200);
-    expect(
-      result.payment_total
-    ).toBe(100);
-  });
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) =>
+              updated
+          );
 
-  it("should throw an error when billing record does not exist", () => {
-    // Arrange
-    billingModel.fetchBillingRecordById.mockReturnValue(
-      null
-    );
+          // Act
+          const result =
+            processPayment(
+              1,
+              300
+            );
 
-    // Act & Assert
-    expect(() =>
-      processPayment(999, 100)
-    ).toThrow(
-      "Billing record not found."
-    );
-  });
+          // Assert
+          expect(
+            result.status
+          ).toBe("Paid");
 
-  it("should prevent overpayment", () => {
-    // Arrange
-    billingModel.fetchBillingRecordById.mockReturnValue(
-      {
-        remaining_balance: 200,
-      }
-    );
+          expect(
+            result.remaining_balance
+          ).toBe(0);
 
-    // Act & Assert
-    expect(() =>
-      processPayment(1, 300)
-    ).toThrow(
-      "Payment exceeds remaining balance."
-    );
-  });
+          expect(
+            result.payment_total
+          ).toBe(300);
+        }
+      );
 
-  it("should fetch all billing records", () => {
-    // Arrange
-    billingModel.fetchBillingRecords.mockReturnValue(
-      [
-        { id: 1 },
-        { id: 2 },
-      ]
-    );
+      it(
+        "should process a partial payment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+              total_bill: 300,
+              payment_1: 0,
+              payment_2: 0,
+              payment_total: 0,
+              remaining_balance: 300,
+            }
+          );
 
-    // Act
-    const result =
-      fetchAllBilling();
+          billingModel.updateBillingRecord.mockImplementation(
+            (_, updated) =>
+              updated
+          );
 
-    // Assert
-    expect(
-      billingModel.fetchBillingRecords
-    ).toHaveBeenCalledTimes(1);
+          // Act
+          const result =
+            processPayment(
+              1,
+              100
+            );
 
-    expect(result).toHaveLength(2);
-  });
+          // Assert
+          expect(
+            result.status
+          ).toBe(
+            "Partially Paid"
+          );
 
-  it("should fetch one billing record", () => {
-    // Arrange
-    billingModel.fetchBillingRecordById.mockReturnValue(
-      {
-        id: 1,
-      }
-    );
+          expect(
+            result.remaining_balance
+          ).toBe(200);
 
-    // Act
-    const result =
-      fetchBilling(1);
+          expect(
+            result.payment_total
+          ).toBe(100);
+        }
+      );
 
-    // Assert
-    expect(
-      billingModel.fetchBillingRecordById
-    ).toHaveBeenCalledWith(1);
+      it(
+        "should throw an error when billing record does not exist",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            null
+          );
 
-    expect(result.id).toBe(1);
-  });
+          // Act & Assert
+          expect(() =>
+            processPayment(
+              999,
+              100
+            )
+          ).toThrow(
+            "Billing record not found."
+          );
+        }
+      );
+
+      it(
+        "should prevent overpayment",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              remaining_balance: 200,
+            }
+          );
+
+          // Act & Assert
+          expect(() =>
+            processPayment(
+              1,
+              300
+            )
+          ).toThrow(
+            "Payment exceeds remaining balance."
+          );
+        }
+      );
+    }
+  );
+
+  describe(
+    "fetchAllBilling",
+    () => {
+      it(
+        "should fetch all billing records",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecords.mockReturnValue(
+            [
+              {
+                id: 1,
+              },
+              {
+                id: 2,
+              },
+            ]
+          );
+
+          // Act
+          const result =
+            fetchAllBilling();
+
+          // Assert
+          expect(
+            billingModel.fetchBillingRecords
+          ).toHaveBeenCalledTimes(
+            1
+          );
+
+          expect(
+            result
+          ).toHaveLength(2);
+        }
+      );
+    }
+  );
+
+  describe(
+    "fetchBilling",
+    () => {
+      it(
+        "should fetch one billing record",
+        () => {
+          // Arrange
+          billingModel.fetchBillingRecordById.mockReturnValue(
+            {
+              id: 1,
+            }
+          );
+
+          // Act
+          const result =
+            fetchBilling(1);
+
+          // Assert
+          expect(
+            billingModel.fetchBillingRecordById
+          ).toHaveBeenCalledWith(
+            1
+          );
+
+          expect(
+            result.id
+          ).toBe(1);
+        }
+      );
+    }
+  );
 });
