@@ -35,5 +35,20 @@ export const notificationService = {
 
     const updatedRecord = await notificationModel.updateReadStatus(notificationId, true);
     return { errorType: null, data: { modified: true, id: updatedRecord.id, is_read: updatedRecord.is_read } };
+  },
+
+  delete: async (notificationId, userId) => {
+    const targetAlert = await notificationModel.findById(notificationId);
+
+    if (!targetAlert) {
+      return { errorType: 'NOT_FOUND', data: { error: 'Not Found' } };
+    }
+
+    if (targetAlert.profile_id !== userId) {
+      return { errorType: 'FORBIDDEN', data: { error: 'Forbidden' } };
+    }
+
+    const deleted = await notificationModel.deleteById(notificationId);
+    return { errorType: null, data: { deleted: true, id: deleted.id } };
   }
 };

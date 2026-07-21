@@ -1,17 +1,71 @@
 import mockBillingData from "../data/mockBillingData.js";
 
-export function fetchBillingRecords() {
-  return mockBillingData;
+const consumerBillingData = [
+  {
+    id: 2026006,
+    user_id: 2,
+    billing_date: "2026-07-01",
+    due_date: "2026-07-25",
+    total_bill: 450,
+    remaining_balance: 450,
+    status: "Unpaid",
+    consumption: {
+      reading_date: "2026-07-01",
+      previous_reading: 115.5,
+      present_reading: 138.2,
+      consumption: 22.7,
+    },
+  },
+  {
+    id: 2026005,
+    user_id: 2,
+    billing_date: "2026-06-01",
+    due_date: "2026-06-25",
+    total_bill: 390,
+    remaining_balance: 0,
+    status: "Paid",
+    consumption: {
+      reading_date: "2026-06-01",
+      previous_reading: 93.4,
+      present_reading: 115.5,
+      consumption: 22.1,
+    },
+  },
+  {
+    id: 2026004,
+    user_id: 2,
+    billing_date: "2026-05-01",
+    due_date: "2026-05-25",
+    total_bill: 360,
+    remaining_balance: 0,
+    status: "Paid",
+    consumption: {
+      reading_date: "2026-05-01",
+      previous_reading: 72.9,
+      present_reading: 93.4,
+      consumption: 20.5,
+    },
+  },
+];
+
+export function fetchBillingRecords(userId) {
+  if (userId === undefined) {
+    return mockBillingData;
+  }
+
+  return [...consumerBillingData, ...mockBillingData].filter(
+    (record) => record.user_id === Number(userId)
+  );
 }
 
 export function fetchBillingRecordById(id) {
-  return mockBillingData.find(
+  return [...consumerBillingData, ...mockBillingData].find(
     (record) => record.id === Number(id)
   );
 }
 
 export function fetchBillingRecordByUserId(userId) {
-  return mockBillingData.find(
+  return [...consumerBillingData, ...mockBillingData].find(
     (record) =>
       record.user_id === Number(userId)
   );

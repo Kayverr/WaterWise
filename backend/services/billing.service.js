@@ -177,8 +177,8 @@ export function processPayment(
   );
 }
 
-export function fetchAllBilling() {
-  return fetchBillingRecords();
+export function fetchAllBilling(userId) {
+  return fetchBillingRecords(userId);
 }
 
 export function fetchBilling(id) {

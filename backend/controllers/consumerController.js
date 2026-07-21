@@ -2,8 +2,7 @@ import { consumerService } from '../services/consumerService.js';
 
 export const getProfile = async (req, res) => {
   try {
-    const profileId = req.user?.id ?? 'owner-uuid-101';
-    const profile = await consumerService.getProfile(profileId);
+    const profile = await consumerService.getProfile(req.user.id);
 
     return res.status(200).json(profile);
   } catch (error) {

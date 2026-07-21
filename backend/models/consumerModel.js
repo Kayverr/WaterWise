@@ -1,10 +1,11 @@
 let temporaryReadings = [
-  { id: 'read-101', profile_id: 'owner-uuid-101', reading_date: '2026-06-01', previous_reading: '100.00', present_reading: '115.50' },
-  { id: 'read-102', profile_id: 'owner-uuid-101', reading_date: '2026-07-01', previous_reading: '115.50', present_reading: '138.20' }
+  { id: 'read-102', profile_id: 2, reading_date: '2026-07-01', previous_reading: 115.5, present_reading: 138.2, consumption: 22.7 },
+  { id: 'read-101', profile_id: 2, reading_date: '2026-06-01', previous_reading: 93.4, present_reading: 115.5, consumption: 22.1 }
 ];
 
 let temporaryInvoices = [
-  { id: 'inv-201', profile_id: 'owner-uuid-101', amount_due: '450.00', status: 'Unpaid', billing_month: 'June 2026' }
+  { id: 2026006, profile_id: 2, total_bill: 450, remaining_balance: 450, status: 'Unpaid', billing_date: '2026-07-01', due_date: '2026-07-25' },
+  { id: 2026005, profile_id: 2, total_bill: 390, remaining_balance: 0, status: 'Paid', billing_date: '2026-06-01', due_date: '2026-06-25' }
 ];
 
 export const consumerModel = {

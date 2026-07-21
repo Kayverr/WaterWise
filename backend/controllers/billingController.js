@@ -1,8 +1,8 @@
 import { fetchAllBilling } from "../services/billing.service.js";
 
-export async function getCurrentBilling(_req, res) {
+export async function getCurrentBilling(req, res) {
   try {
-    const billingRecords = await fetchAllBilling();
+    const billingRecords = await fetchAllBilling(req.user.id);
     const unpaidBalanceTotal = billingRecords.reduce((total, record) => {
       const remainingBalance = Number(record.remaining_balance);
 
@@ -20,9 +20,9 @@ export async function getCurrentBilling(_req, res) {
   }
 }
 
-export async function getBillingHistory(_req, res) {
+export async function getBillingHistory(req, res) {
   try {
-    const billingRecords = await fetchAllBilling();
+    const billingRecords = await fetchAllBilling(req.user.id);
 
     return res.status(200).json(billingRecords);
   } catch {
