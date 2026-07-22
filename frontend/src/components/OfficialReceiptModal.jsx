@@ -26,7 +26,7 @@ export default function OfficialReceiptModal({ isOpen, receiptData, onClose }) {
     arrears90Days = 0,
   } = receiptData;
 
-  const cubicMetersUsed = presentReading - previousReading;
+  const cubicMetersUsed = Number((presentReading - previousReading).toFixed(2));
   const totalArrears = arrears30Days + arrears60Days + arrears90Days;
   const finalTotalBill = baselineBill + totalArrears;
 

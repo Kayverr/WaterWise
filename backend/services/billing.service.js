@@ -5,7 +5,9 @@ import {
   updateBillingRecord,
 } from "../models/billing.model.js";
 
-const WATER_RATE = 15;
+export { removeBillingRecord, updateBillingRecord } from "../models/billing.model.js";
+
+export const WATER_RATE = 17;
 
 export function calculateBillingAmount(
   previousReading,

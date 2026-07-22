@@ -8,6 +8,8 @@ import {
 
 import validateMeterReading from "../validation/meterReading.validation.js";
 
+export const WATER_RATE_PER_CUBIC_METER = 17;
+
 export function fetchMeterReadings() {
   return getMeterReadings();
 }
@@ -34,6 +36,7 @@ export function addMeterReading(data) {
   }
 
   const newReading = {
+    consumerId: Number(data.consumerId),
     consumerNo: data.consumerNo,
     consumerName: data.consumerName,
     purok: data.purok,
@@ -46,6 +49,9 @@ export function addMeterReading(data) {
     consumption:
       Number(data.currentReading) -
       Number(data.previousReading),
+    billAmount:
+      (Number(data.currentReading) - Number(data.previousReading)) *
+      WATER_RATE_PER_CUBIC_METER,
     readingDate: data.readingDate,
     status:
       data.status || "Recorded",
@@ -80,6 +86,7 @@ export function editMeterReading(
   }
 
   const updatedReading = {
+    consumerId: Number(data.consumerId ?? existing.consumerId),
     consumerNo: data.consumerNo,
     consumerName: data.consumerName,
     purok: data.purok,
@@ -92,6 +99,9 @@ export function editMeterReading(
     consumption:
       Number(data.currentReading) -
       Number(data.previousReading),
+    billAmount:
+      (Number(data.currentReading) - Number(data.previousReading)) *
+      WATER_RATE_PER_CUBIC_METER,
     readingDate: data.readingDate,
     status:
       data.status || "Recorded",

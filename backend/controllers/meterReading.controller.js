@@ -11,8 +11,7 @@ export async function getMeterReadings(
   res
 ) {
   try {
-    const readings =
-      fetchMeterReadings();
+    const readings = await fetchMeterReadings();
 
     res.status(200).json(readings);
 
@@ -31,8 +30,7 @@ export async function getMeterReading(
   res
 ) {
   try {
-    const reading =
-      fetchMeterReadingById(
+    const reading = await fetchMeterReadingById(
         req.params.id
       );
 
@@ -64,8 +62,7 @@ export async function createMeterReading(
   res
 ) {
   try {
-    const reading =
-      addMeterReading(
+    const reading = await addMeterReading(
         req.body
       );
 
@@ -102,8 +99,7 @@ export async function updateMeterReading(
   res
 ) {
   try {
-    const reading =
-      editMeterReading(
+    const reading = await editMeterReading(
         req.params.id,
         req.body
       );
@@ -153,8 +149,7 @@ export async function deleteMeterReading(
   res
 ) {
   try {
-    const result =
-      removeMeterReading(
+    const result = await removeMeterReading(
         req.params.id
       );
 

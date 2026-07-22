@@ -1,13 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import request from "supertest";
 
-const { getProfile } = vi.hoisted(() => ({
+const { createConsumer, updateConsumer, getConsumerDirectory, getProfile } = vi.hoisted(() => ({
+  createConsumer: vi.fn(),
+  updateConsumer: vi.fn(),
+  getConsumerDirectory: vi.fn(),
   getProfile: vi.fn(),
 }));
 
 vi.mock("dotenv/config", () => ({}));
 
 vi.mock("../../controllers/consumerController.js", () => ({
+  createConsumer,
+  updateConsumer,
+  getConsumerDirectory,
   getProfile,
 }));
 

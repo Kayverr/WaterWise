@@ -15,6 +15,71 @@ function unwrap({ data, error }) {
 }
 
 export const consumerModel = {
+  async listDirectory() {
+    if (process.env.WATERWISE_E2E === "true") {
+      return [
+        { id: 1, consumerNo: "C-1001", consumerName: "Juan Dela Cruz", purok: "Purok 1" },
+        { id: 2, consumerNo: "C-1002", consumerName: "Maria Santos", purok: "Purok 2" },
+        { id: 3, consumerNo: "C-1003", consumerName: "Pedro Reyes", purok: "Purok 3" },
+        { id: 4, consumerNo: "C-1004", consumerName: "Ana Cruz", purok: "Purok 4" },
+        { id: 5, consumerNo: "C-1005", consumerName: "Jose Garcia", purok: "Purok 5" },
+      ];
+    }
+
+    const consumers = unwrap(
+      await supabase
+        .from("consumers")
+        .select("id, username, full_name, email, purok_no, status")
+        .order("full_name", { ascending: true }),
+    ) ?? [];
+
+    return consumers.map((consumer) => ({
+      id: consumer.id,
+      consumerNo: `C-${String(consumer.id).padStart(4, "0")}`,
+      consumerName: consumer.full_name,
+      username: consumer.username,
+      email: consumer.email,
+      status: consumer.status,
+      purok: consumer.purok_no == null ? "Unassigned" : `Purok ${consumer.purok_no}`,
+    }));
+  },
+
+  async create({ username, fullName, email, purokNo, password, status = "active" }) {
+    const result = await supabase
+      .from("consumers")
+      .insert({
+        username,
+        full_name: fullName,
+        email,
+        purok_no: purokNo,
+        password,
+        status,
+      })
+      .select("id, username, full_name, email, purok_no, status, created_at, updated_at")
+      .single();
+
+    const consumer = unwrap(result);
+    return {
+      ...consumer,
+      name: consumer.full_name,
+      purok: consumer.purok_no == null ? null : `Purok ${consumer.purok_no}`,
+    };
+  },
+
+  async update(id, { username, fullName, email, purokNo, password }) {
+    const fields = {
+      username,
+      full_name: fullName,
+      email,
+      purok_no: purokNo,
+      updated_at: new Date().toISOString(),
+    };
+    if (password) fields.password = password;
+    const result = await supabase.from("consumers").update(fields).eq("id", id)
+      .select("id, username, full_name, email, purok_no, status").maybeSingle();
+    return unwrap(result);
+  },
+
   async findProfile(profileId, sessionUserId) {
     assertOwnAccount(profileId, sessionUserId);
 

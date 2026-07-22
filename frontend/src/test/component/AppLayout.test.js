@@ -68,12 +68,14 @@ describe("AppLayout rendering", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders the meter-reader navigation", () => {
+  it("renders the meter-reader navigation", async () => {
     renderLayout("/meter-reader/readings-entry");
+
+    await screen.findByText("Test Account");
 
     expect(screen.getByRole("heading", { name: "Readings Entry" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Readings Entry" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Consumer Directory" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Consumer Directory" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Billing Ledger" })).not.toBeInTheDocument();
   });
 });

@@ -59,6 +59,19 @@ CREATE TABLE IF NOT EXISTS billing (
     updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- CREATE PAYMENTS TABLE
+CREATE TABLE IF NOT EXISTS payments (
+    id SERIAL PRIMARY KEY,
+    billing_id INTEGER NOT NULL REFERENCES billing (id) ON DELETE CASCADE,
+    total_paid NUMERIC(10,2) NOT NULL,
+    remaining_balance NUMERIC(10,2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index for fast lookup queries when fetching payment logs by billing record
+CREATE INDEX IF NOT EXISTS idx_payments_billing_id ON payments (billing_id);
+
 -- 6. NOTIFICATIONS TABLE 
 -- Updated to allow a targeted consumer_id (NULL tracks system-wide admin announcements)
 CREATE TABLE IF NOT EXISTS notifications (

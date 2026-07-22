@@ -17,7 +17,7 @@ const sampleEvents = [
   },
 ];
 
-export default function EventRecordsTable() {
+export default function EventRecordsTable({ events = sampleEvents, onEdit, onDelete }) {
   return (
     <div className="rounded-lg bg-white p-6 shadow">
       <h2 className="mb-4 text-2xl font-bold">
@@ -37,7 +37,7 @@ export default function EventRecordsTable() {
         </thead>
 
         <tbody>
-          {sampleEvents.map((event) => (
+          {events.map((event) => (
             <tr
               key={event.id}
               className="text-center hover:bg-gray-50"
@@ -57,15 +57,15 @@ export default function EventRecordsTable() {
               </td>
 
               <td className="border p-3">
-                {event.tags}
+                {Array.isArray(event.tags) ? event.tags.join("") : event.tags}
               </td>
 
               <td className="border p-3 space-x-2">
-                <button className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
+                <button type="button" onClick={() => onEdit?.(event)} className="rounded bg-yellow-500 px-3 py-1 text-white hover:bg-yellow-600">
                   Edit
                 </button>
 
-                <button className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
+                <button type="button" onClick={() => onDelete?.(event.id)} className="rounded bg-red-600 px-3 py-1 text-white hover:bg-red-700">
                   Delete
                 </button>
               </td>

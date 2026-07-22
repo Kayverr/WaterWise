@@ -76,3 +76,43 @@ select {
     animation: none;
   }
 }
+/* Admin datasets refresh automatically; manual refresh controls are hidden. */
+.admin-auto-refresh button:has(.lucide-refresh-cw) {
+  display: none;
+}
+
+/* Slightly denser typography for the data-heavy admin workspace only. */
+.admin-auto-refresh .text-4xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.admin-auto-refresh .text-3xl {
+  font-size: 1.625rem;
+  line-height: 2rem;
+}
+
+.admin-auto-refresh .text-2xl {
+  font-size: 1.3rem;
+  line-height: 1.75rem;
+}
+
+.admin-auto-refresh .text-xl {
+  font-size: 1.1rem;
+  line-height: 1.55rem;
+}
+
+.admin-auto-refresh .text-base {
+  font-size: 0.925rem;
+  line-height: 1.4rem;
+}
+
+.admin-auto-refresh .text-sm {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+.admin-auto-refresh .text-xs {
+  font-size: 0.7rem;
+  line-height: 1rem;
+}

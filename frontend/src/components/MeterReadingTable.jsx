@@ -2,6 +2,7 @@ const MeterReadingTable = ({
   readings,
   onEdit,
   onDelete,
+  readOnly = false,
 }) => {
   if (!readings.length) {
     return (
@@ -77,12 +78,9 @@ const MeterReadingTable = ({
               Status
             </th>
 
-            <th
-              scope="col"
-              className="px-4 py-3 text-center"
-            >
-              Actions
-            </th>
+            {!readOnly && (
+              <th scope="col" className="px-4 py-3 text-center">Actions</th>
+            )}
           </tr>
         </thead>
 
@@ -132,29 +130,14 @@ const MeterReadingTable = ({
                 </span>
               </td>
 
-              <td className="px-4 py-3">
-                <div className="flex justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onEdit(reading)
-                    }
-                    className="rounded bg-yellow-500 px-4 py-1 text-white hover:bg-yellow-600"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      onDelete(reading.id)
-                    }
-                    className="rounded bg-red-600 px-4 py-1 text-white hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
+              {!readOnly && (
+                <td className="px-4 py-3">
+                  <div className="flex justify-center gap-2">
+                    <button type="button" onClick={() => onEdit?.(reading)} className="rounded bg-yellow-500 px-4 py-1 text-white hover:bg-yellow-600">Edit</button>
+                    <button type="button" onClick={() => onDelete?.(reading.id)} className="rounded bg-red-600 px-4 py-1 text-white hover:bg-red-700">Delete</button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

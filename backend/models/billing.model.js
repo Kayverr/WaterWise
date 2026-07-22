@@ -74,7 +74,7 @@ async function fetchBillingRecordsFromSupabase(userId) {
 
   let query = supabase
     .from(TABLE)
-    .select("*, consumption(*)")
+    .select("*, consumption(*), payments(id, total_paid), consumers!billing_user_id_fkey(full_name, purok_no)")
     .order("billing_date", { ascending: false });
 
   if (userId !== undefined) {
@@ -187,4 +187,14 @@ async function removeBillingRecordFromSupabase(id) {
     .maybeSingle();
 
   return unwrap(result) !== null;
+}
+
+export async function fetchBillingRecordByConsumptionId(consumptionId) {
+  const result = await supabase
+    .from(TABLE)
+    .select("*")
+    .eq("consumption_id", consumptionId)
+    .maybeSingle();
+
+  return unwrap(result);
 }

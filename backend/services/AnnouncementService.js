@@ -68,6 +68,13 @@ export function searchAnnouncement(
 
 
 
+  if (announcement && typeof announcement.then === "function") {
+    return announcement.then((record) => {
+      if (!record) throw new Error("Announcement not found.");
+      return record;
+    });
+  }
+
   if (!announcement) {
 
     throw new Error(
@@ -94,7 +101,7 @@ export function editAnnouncement(
 
   // Check existing record
 
-  searchAnnouncement(id);
+  const existing = searchAnnouncement(id);
 
 
 
@@ -116,10 +123,11 @@ export function editAnnouncement(
 
 
 
-  return updateAnnouncement(
-    id,
-    announcementData
-  );
+  if (existing && typeof existing.then === "function") {
+    return existing.then(() => updateAnnouncement(id, announcementData));
+  }
+
+  return updateAnnouncement(id, announcementData);
 
 }
 
@@ -135,19 +143,19 @@ export function removeAnnouncement(
 
   // Check existing record
 
-  searchAnnouncement(id);
-
-
-
-  deleteAnnouncement(id);
-
-
-
-  return {
+  const existing = searchAnnouncement(id);
+  const result = {
 
     message:
       "Announcement deleted successfully.",
 
   };
+
+  if (existing && typeof existing.then === "function") {
+    return existing.then(() => deleteAnnouncement(id)).then(() => result);
+  }
+
+  deleteAnnouncement(id);
+  return result;
 
 }

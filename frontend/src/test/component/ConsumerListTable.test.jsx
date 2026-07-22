@@ -33,11 +33,11 @@ describe("ConsumerListTable", () => {
     ).toBeInTheDocument();
   });
 
-  it("should render Contact Number header", () => {
+  it("should render Contact header", () => {
     render(<ConsumerListTable />);
 
     expect(
-      screen.getByText("Contact Number")
+      screen.getByText("Contact")
     ).toBeInTheDocument();
   });
 
@@ -49,19 +49,19 @@ describe("ConsumerListTable", () => {
     ).toBeInTheDocument();
   });
 
-  it("should render Email Address header", () => {
+  it("should render Email header", () => {
     render(<ConsumerListTable />);
 
     expect(
-      screen.getByText("Email Address")
+      screen.getByText("Email")
     ).toBeInTheDocument();
   });
 
-  it("should render Payment Status header", () => {
+  it("should render Status header", () => {
     render(<ConsumerListTable />);
 
     expect(
-      screen.getByText("Payment Status")
+      screen.getByText("Status")
     ).toBeInTheDocument();
   });
 
@@ -95,14 +95,14 @@ describe("ConsumerListTable", () => {
     ).toBeInTheDocument();
   });
 
-  it("should render View button", () => {
+  it("should not render View button", () => {
     render(
       <ConsumerListTable consumers={consumers} />
     );
 
     expect(
-      screen.getByRole("button", { name: /view/i })
-    ).toBeInTheDocument();
+      screen.queryByRole("button", { name: /view/i })
+    ).not.toBeInTheDocument();
   });
 
   it("should render Edit button", () => {
@@ -113,29 +113,6 @@ describe("ConsumerListTable", () => {
     expect(
       screen.getByRole("button", { name: /edit/i })
     ).toBeInTheDocument();
-  });
-
-  it("should call onView when View button is clicked", async () => {
-    const user = userEvent.setup();
-
-    const onView = vi.fn();
-
-    render(
-      <ConsumerListTable
-        consumers={consumers}
-        onView={onView}
-      />
-    );
-
-    await user.click(
-      screen.getByRole("button", { name: /view/i })
-    );
-
-    expect(onView).toHaveBeenCalledTimes(1);
-
-    expect(onView).toHaveBeenCalledWith(
-      consumers[0]
-    );
   });
 
   it("should call onEdit when Edit button is clicked", async () => {

@@ -63,24 +63,27 @@ function renderLedger(props = {}, initialEntries = ["/consumer/billing-ledger"])
 }
 
 describe("BillingLedger inter-component page", () => {
-  it("renders current billing, history table, and opens digital receipts only for paid rows", () => {
+  it("renders current billing and opens an official receipt for each history row", () => {
     renderLedger();
 
     expect(screen.getByTestId("current-billing-card")).toBeInTheDocument();
     expect(screen.getByTestId("outstanding-balance")).toHaveTextContent("820.00");
     expect(screen.getByTestId("billing-history-table")).toBeInTheDocument();
+    expect(screen.queryByRole("columnheader", { name: "Consumer Name" })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("view-receipt-INV-PAID-001"));
-    expect(screen.getByTestId("receipt-invoice")).toHaveTextContent("INV-PAID-001");
+    expect(screen.getByText("Sucol Water System Official Receipt")).toBeInTheDocument();
+    expect(screen.getByTestId("telemetry-prev")).toHaveTextContent("100");
 
-    fireEvent.click(screen.getByTestId("close-modal-btn"));
-    expect(screen.queryByTestId("receipt-invoice")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("close-modal"));
+    expect(screen.queryByText("Sucol Water System Official Receipt")).not.toBeInTheDocument();
 
-    expect(screen.getByTestId("view-receipt-INV-OVERDUE-001")).toBeDisabled();
+    expect(screen.getByTestId("view-receipt-INV-OVERDUE-001")).toBeEnabled();
   });
 
-  it("opens the official receipt when the notification route query is present", () => {
-    renderLedger({}, ["/consumer/billing-ledger?receipt=official"]);
+  it("opens the official receipt for the selected billing history", () => {
+    renderLedger();
+    fireEvent.click(screen.getByTestId("view-receipt-INV-PAID-001"));
 
     expect(screen.getByText("Sucol Water System Official Receipt")).toBeInTheDocument();
     expect(screen.getByTestId("receipt-meter-name")).toHaveTextContent("SWS-MTR-7777");

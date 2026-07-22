@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
 import BillingHistoryTable from "../components/BillingHistoryTable";
 import CurrentBillingCard from "../components/CurrentBillingCard";
-import DigitalReceiptModal from "../components/DigitalReceiptModal";
 import OfficialReceiptModal from "../components/OfficialReceiptModal";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { fetchBillingLedger } from "../services/consumerPortal.service";
@@ -15,11 +13,7 @@ export default function BillingLedger({
   const usesApi = historyDataProp === undefined;
   const [ledger, setLedger] = useState(null);
   const [error, setError] = useState("");
-  const [selectedReceipt, setSelectedReceipt] = useState(null);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const isOfficialReceiptOpen = searchParams.get("receipt") === "official";
+  const [selectedOfficialReceipt, setSelectedOfficialReceipt] = useState(null);
 
   useEffect(() => {
     if (!usesApi) return undefined;
@@ -47,18 +41,16 @@ export default function BillingLedger({
   }
 
   const handleSelectReceipt = (receipt) => {
-    if (receipt.status !== "Paid") {
-      setSelectedReceipt(null);
-      return;
-    }
-
-    setSelectedReceipt(receipt);
-  };
-  const openOfficialReceipt = () => {
-    navigate("/consumer/billing-ledger?receipt=official");
-  };
-  const closeOfficialReceipt = () => {
-    navigate("/consumer/billing-ledger", { replace: true });
+    setSelectedOfficialReceipt({
+      meterName: officialReceipt?.meterName ?? ledgerAccount.accountId,
+      runDate: receipt.readingDate,
+      previousReading: Number(receipt.previousReading),
+      presentReading: Number(receipt.currentReading),
+      baselineBill: Number(receipt.amountDue),
+      arrears30Days: 0,
+      arrears60Days: 0,
+      arrears90Days: 0,
+    });
   };
 
   return (
@@ -79,31 +71,21 @@ export default function BillingLedger({
               Billing History
             </h3>
           </div>
-          {officialReceipt && <button
-            className="min-h-11 w-full rounded-xl bg-sky-50 px-4 py-3 text-sm font-bold text-[#0284C7] transition hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0284C7] focus-visible:ring-offset-2 sm:w-auto"
-            onClick={openOfficialReceipt}
-            type="button"
-          >
-            View Official Receipt
-          </button>}
         </div>
 
         <BillingHistoryTable
           historyData={historyData}
           onSelectReceipt={handleSelectReceipt}
+          allowAllReceipts
+          receiptLabel="View Official Receipt"
+          showConsumerDetails={false}
         />
       </section>
 
-      <DigitalReceiptModal
-        isOpen={Boolean(selectedReceipt)}
-        onClose={() => setSelectedReceipt(null)}
-        receiptData={selectedReceipt}
-      />
-
       <OfficialReceiptModal
-        isOpen={isOfficialReceiptOpen}
-        onClose={closeOfficialReceipt}
-        receiptData={officialReceipt}
+        isOpen={Boolean(selectedOfficialReceipt)}
+        onClose={() => setSelectedOfficialReceipt(null)}
+        receiptData={selectedOfficialReceipt}
       />
     </div>
   );

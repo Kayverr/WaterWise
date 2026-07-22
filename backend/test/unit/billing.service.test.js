@@ -48,8 +48,8 @@ describe("Billing Service", () => {
           // Assert
           expect(result).toEqual({
             cubic_used: 20,
-            current_bill: 300,
-            total_bill: 300,
+            current_bill: 340,
+            total_bill: 340,
           });
         }
       );
@@ -190,15 +190,15 @@ describe("Billing Service", () => {
 
           expect(
             result.current_bill
-          ).toBe(300);
+          ).toBe(340);
 
           expect(
             result.total_bill
-          ).toBe(300);
+          ).toBe(340);
 
           expect(
             result.remaining_balance
-          ).toBe(300);
+          ).toBe(340);
 
           expect(
             result.status

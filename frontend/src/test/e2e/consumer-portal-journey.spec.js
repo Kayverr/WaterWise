@@ -59,10 +59,8 @@ test.describe("Consumer portal end-to-end journey", () => {
     await billingReadResponse;
 
     await expect(page).toHaveURL(/\/consumer\/billing-ledger\?receipt=official$/);
-    await expect(
-      page.getByRole("heading", { name: "Sucol Water System Official Receipt" }),
-    ).toBeVisible();
-    await page.getByRole("button", { name: "Close official receipt" }).click();
+    await expect(page.getByTestId("billing-history-table")).toBeVisible();
+    await expect(page.getByTestId("receipt-modal")).toHaveCount(0);
 
     await page.getByTestId("notification-trigger").click();
     await expect(billingNotification).toHaveAttribute("data-is-read", "true");
@@ -89,25 +87,17 @@ test.describe("Consumer portal end-to-end journey", () => {
     await expect(page.getByTestId("due-date")).toHaveText("July 25, 2026");
     await expect(page.getByTestId("billing-history-table")).toBeVisible();
     await expect(page.getByTestId("history-row")).toHaveCount(3);
-    await expect(page.getByTestId("view-receipt-INV-2026-006")).toBeDisabled();
+    await expect(page.getByTestId("view-receipt-INV-2026-006")).toBeEnabled();
 
     await page.getByTestId("view-receipt-INV-2026-005").click();
-    await expect(page.getByTestId("receipt-modal-content")).toBeVisible();
-    await expect(page.getByTestId("receipt-invoice")).toHaveText("INV-2026-005");
-    await expect(page.getByTestId("receipt-diff")).toContainText("22.1");
-    await expect(page.getByTestId("receipt-total-payable")).toContainText("390.00");
-    await page.getByRole("button", { name: "Close receipt" }).click();
-    await expect(page.getByTestId("receipt-modal-content")).toBeHidden();
-
-    await page.getByRole("button", { name: "View Official Receipt" }).click();
-    await expect(page).toHaveURL(/\/consumer\/billing-ledger\?receipt=official$/);
     await expect(
       page.getByRole("heading", { name: "Sucol Water System Official Receipt" }),
     ).toBeVisible();
     await expect(page.getByTestId("receipt-meter-name")).toHaveText("SWS-MTR-0412");
-    await expect(page.getByTestId("receipt-final-total")).toContainText("450.00");
+    await expect(page.getByTestId("telemetry-used")).toContainText("22.1");
+    await expect(page.getByTestId("receipt-final-total")).toContainText("390.00");
     await page.getByRole("button", { name: "Close official receipt" }).click();
-    await expect(page).toHaveURL(/\/consumer\/billing-ledger$/);
+    await expect(page.getByTestId("receipt-modal")).toHaveCount(0);
 
     const refreshedHistoryResponse = page.waitForResponse(
       (response) =>

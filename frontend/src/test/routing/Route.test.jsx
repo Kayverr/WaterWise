@@ -107,19 +107,6 @@ describe("App routing", () => {
     });
   });
 
-  it("renders mock portal routes inside the shared layout", async () => {
-    window.localStorage.setItem(MOCK_ROLE_STORAGE_KEY, "admin");
-    renderRoute("/admin/events");
-
-    expect(
-      await screen.findByRole("heading", { level: 1, name: /events/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/mock workspace/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/this canvas is ready for the events page view/i),
-    ).toBeInTheDocument();
-  });
-
   it("shows a route access error when no mock role is signed in", async () => {
     renderRoute("/consumer/profile-details");
 

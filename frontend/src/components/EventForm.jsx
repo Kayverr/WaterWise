@@ -1,13 +1,31 @@
 import { useState } from "react";
 
-export default function EventForm() {
+function toTimeInputValue(value = "") {
+  const match = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.exec(value);
+  if (!match) return value;
+
+  let hours = Number(match[1]);
+  const minutes = match[2];
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === "AM" && hours === 12) hours = 0;
+  if (meridiem === "PM" && hours !== 12) hours += 12;
+  return `${String(hours).padStart(2, "0")}:${minutes}`;
+}
+
+function initialValues(initialEvent) {
+  return {
+    title: initialEvent?.title ?? "",
+    description: initialEvent?.description ?? "",
+    date: initialEvent?.date ?? "",
+    time: toTimeInputValue(initialEvent?.time),
+    location: initialEvent?.location ?? "",
+    tags: Array.isArray(initialEvent?.tags) ? initialEvent.tags.join(", ") : initialEvent?.tags ?? "",
+  };
+}
+
+export default function EventForm({ initialEvent, onCancel, onSubmit, submitting = false }) {
   const [event, setEvent] = useState({
-    title: "",
-    description: "",
-    date: "",
-    time: "",
-    location: "",
-    tags: "",
+    ...initialValues(initialEvent),
   });
 
   const handleChange = (e) => {
@@ -17,25 +35,20 @@ export default function EventForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    alert("Event Saved!");
-
-    setEvent({
-      title: "",
-      description: "",
-      date: "",
-      time: "",
-      location: "",
-      tags: "",
-    });
+    if (onSubmit) {
+      await onSubmit(event);
+    } else {
+      alert("Event Saved!");
+      setEvent(initialValues());
+    }
   };
 
   return (
     <div className="rounded-lg bg-white p-6 shadow">
       <h2 className="mb-6 text-2xl font-bold">
-        Create Event
+        {initialEvent ? "Edit Event" : "Create Event"}
       </h2>
 
       <form
@@ -93,10 +106,16 @@ export default function EventForm() {
 
         <button
           type="submit"
+          disabled={submitting}
           className="rounded bg-blue-600 px-6 py-3 text-white hover:bg-blue-700"
         >
-          Save Event
+          {initialEvent ? "Update Event" : "Save Event"}
         </button>
+        {initialEvent && (
+          <button type="button" onClick={onCancel} className="ml-3 rounded border px-6 py-3" disabled={submitting}>
+            Cancel
+          </button>
+        )}
       </form>
     </div>
   );

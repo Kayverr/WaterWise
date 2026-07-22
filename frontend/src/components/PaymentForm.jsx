@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function PaymentForm({ onSubmit = () => {} }) {
+function PaymentForm({ onSubmit = () => {}, initialData = null, billingRecords = [] }) {
   const initialState = {
     consumerName: "",
     currentBalance: "",
@@ -9,8 +9,21 @@ function PaymentForm({ onSubmit = () => {} }) {
     paymentMethod: "",
   };
 
-  const [form, setForm] = useState(initialState);
+  const [form, setForm] = useState(() => {
+    if (initialData) {
+      return {
+        billingId: initialData.billingId,
+        consumerName: initialData.consumerName || "",
+        currentBalance: String(initialData.currentBalance || ""),
+        amountPaid: String(initialData.amountPaid || ""),
+        paymentDate: initialData.paymentDate || new Date().toISOString().split("T")[0],
+        paymentMethod: initialData.paymentMethod || "Cash",
+      };
+    }
+    return initialState;
+  });
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const balance = Number(form.currentBalance) || 0;
   const paid = Number(form.amountPaid) || 0;
@@ -23,6 +36,20 @@ function PaymentForm({ onSubmit = () => {} }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    if (name === "consumerName") {
+      const billing = billingRecords.find(
+        (record) => record.consumerName.toLowerCase() === value.trim().toLowerCase(),
+      );
+      setForm((previous) => ({
+        ...previous,
+        consumerName: value,
+        billingId: billing?.id,
+        currentBalance: billing ? String(billing.outstandingBalance) : previous.currentBalance,
+      }));
+      setErrors((previous) => ({ ...previous, consumerName: "", currentBalance: "" }));
+      return;
+    }
 
     setForm((previous) => ({
       ...previous,
@@ -39,83 +66,73 @@ function PaymentForm({ onSubmit = () => {} }) {
     const newErrors = {};
 
     if (!form.consumerName.trim()) {
-      newErrors.consumerName =
-        "Consumer Name is required.";
+      newErrors.consumerName = "Consumer Name is required.";
     }
 
     if (!form.currentBalance) {
-      newErrors.currentBalance =
-        "Current Balance is required.";
+      newErrors.currentBalance = "Current Balance is required.";
     }
 
     if (!form.amountPaid) {
-      newErrors.amountPaid =
-        "Amount Paid is required.";
-    } else if (
-      Number(form.amountPaid) <= 0
-    ) {
-      newErrors.amountPaid =
-        "Amount Paid must be greater than zero.";
-    } else if (
-      Number(form.amountPaid) >
-      Number(form.currentBalance)
-    ) {
-      newErrors.amountPaid =
-        "Amount Paid cannot exceed balance.";
+      newErrors.amountPaid = "Amount Paid is required.";
+    } else if (Number(form.amountPaid) <= 0) {
+      newErrors.amountPaid = "Amount Paid must be greater than zero.";
+    } else if (Number(form.amountPaid) > Number(form.currentBalance)) {
+      newErrors.amountPaid = "Amount Paid cannot exceed balance.";
     }
 
     if (!form.paymentDate) {
-      newErrors.paymentDate =
-        "Payment Date is required.";
+      newErrors.paymentDate = "Payment Date is required.";
     }
 
     if (!form.paymentMethod.trim()) {
-      newErrors.paymentMethod =
-        "Payment Method is required.";
+      newErrors.paymentMethod = "Payment Method is required.";
     }
 
     setErrors(newErrors);
 
-    return (
-      Object.keys(newErrors).length === 0
-    );
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!validate()) {
       return;
     }
 
-    onSubmit({
-      ...form,
-      currentBalance: Number(
-        form.currentBalance
-      ),
-      amountPaid: Number(form.amountPaid),
-      remainingBalance,
-      paymentStatus,
-    });
+    try {
+      setSubmitting(true);
+      const saved = await onSubmit({
+        ...form,
+        currentBalance: Number(form.currentBalance),
+        amountPaid: Number(form.amountPaid),
+        remainingBalance,
+        paymentStatus,
+        billingId: form.billingId,
+      });
 
-    setForm(initialState);
-    setErrors({});
+      if (saved !== false) {
+        setForm(initialState);
+        setErrors({});
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
+      id="payment-form-section"
       className="max-w-xl mx-auto bg-white rounded-lg shadow p-6 space-y-4"
     >
-      <h2 className="text-2xl font-bold">
-        Payment Form
-      </h2>
+      <h2 className="text-2xl font-bold">Payment Form</h2>
+
+      <p className="text-sm text-slate-500">The first entry is saved as Payment 1; the next entry for the same bill is saved as Payment 2.</p>
 
       <div>
-        <label htmlFor="consumerName">
-          Consumer Name
-        </label>
-
+        <label htmlFor="consumerName">Consumer Name</label>
         <input
           id="consumerName"
           name="consumerName"
@@ -123,24 +140,21 @@ function PaymentForm({ onSubmit = () => {} }) {
           placeholder="Consumer Name"
           value={form.consumerName}
           onChange={handleChange}
+          list="billable-consumers"
           className="w-full border rounded p-2"
         />
-
+        <datalist id="billable-consumers">
+          {billingRecords.filter((record) => record.outstandingBalance > 0).map((record) => (
+            <option key={record.id} value={record.consumerName}>{`Balance: ₱${record.outstandingBalance}`}</option>
+          ))}
+        </datalist>
         {errors.consumerName && (
-          <p
-            role="alert"
-            className="text-red-500"
-          >
-            {errors.consumerName}
-          </p>
+          <p role="alert" className="text-red-500">{errors.consumerName}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="currentBalance">
-          Current Balance
-        </label>
-
+        <label htmlFor="currentBalance">Current Balance</label>
         <input
           id="currentBalance"
           name="currentBalance"
@@ -148,24 +162,16 @@ function PaymentForm({ onSubmit = () => {} }) {
           placeholder="Current Balance"
           value={form.currentBalance}
           onChange={handleChange}
+          readOnly={Boolean(form.billingId)}
           className="w-full border rounded p-2"
         />
-
         {errors.currentBalance && (
-          <p
-            role="alert"
-            className="text-red-500"
-          >
-            {errors.currentBalance}
-          </p>
+          <p role="alert" className="text-red-500">{errors.currentBalance}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="amountPaid">
-          Amount Paid
-        </label>
-
+        <label htmlFor="amountPaid">{(billingRecords.find((record) => record.id === form.billingId)?.raw?.payments?.length ?? 0) > 0 ? "Payment 2" : "Payment 1"}</label>
         <input
           id="amountPaid"
           name="amountPaid"
@@ -175,22 +181,13 @@ function PaymentForm({ onSubmit = () => {} }) {
           onChange={handleChange}
           className="w-full border rounded p-2"
         />
-
         {errors.amountPaid && (
-          <p
-            role="alert"
-            className="text-red-500"
-          >
-            {errors.amountPaid}
-          </p>
+          <p role="alert" className="text-red-500">{errors.amountPaid}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="paymentDate">
-          Payment Date
-        </label>
-
+        <label htmlFor="paymentDate">Payment Date</label>
         <input
           id="paymentDate"
           name="paymentDate"
@@ -199,22 +196,13 @@ function PaymentForm({ onSubmit = () => {} }) {
           onChange={handleChange}
           className="w-full border rounded p-2"
         />
-
         {errors.paymentDate && (
-          <p
-            role="alert"
-            className="text-red-500"
-          >
-            {errors.paymentDate}
-          </p>
+          <p role="alert" className="text-red-500">{errors.paymentDate}</p>
         )}
       </div>
 
       <div>
-        <label htmlFor="paymentMethod">
-          Payment Method
-        </label>
-
+        <label htmlFor="paymentMethod">Payment Method</label>
         <input
           id="paymentMethod"
           name="paymentMethod"
@@ -224,39 +212,17 @@ function PaymentForm({ onSubmit = () => {} }) {
           onChange={handleChange}
           className="w-full border rounded p-2"
         />
-
         {errors.paymentMethod && (
-          <p
-            role="alert"
-            className="text-red-500"
-          >
-            {errors.paymentMethod}
-          </p>
+          <p role="alert" className="text-red-500">{errors.paymentMethod}</p>
         )}
       </div>
 
       <div className="bg-gray-100 rounded p-4">
-        <p>
-          <strong>
-            Remaining Balance:
-          </strong>{" "}
-          {remainingBalance}
-        </p>
-
-        <p>
-          <strong>
-            Payment Status:
-          </strong>{" "}
-          {paymentStatus}
-        </p>
+        <p><strong>Remaining Balance:</strong> {remainingBalance}</p>
+        <p><strong>Payment Status:</strong> {paymentStatus}</p>
       </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Record Payment
-      </button>
+      <button disabled={submitting} type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60">{submitting ? "Recording payment..." : "Record Payment"}</button>
     </form>
   );
 }

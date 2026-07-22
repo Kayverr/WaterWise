@@ -8,20 +8,20 @@ export default function ConsumerInfoGrid({ name, purok, houseNumber }) {
         <div>
           <span className="block text-xs font-semibold text-slate-500">Full name</span>
           <span className="mt-1 block text-xl font-extrabold tracking-[-0.03em] text-[#0F172A]" data-testid="info-name">
-            {name || 'N/A'}
+            {name || "N/A"}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-t border-sky-100 pt-4">
           <div className="rounded-xl bg-white/80 p-3">
             <span className="block text-xs font-semibold text-slate-500">Purok</span>
             <span className="mt-1 block text-base font-bold text-[#0F172A]" data-testid="info-purok">
-              {purok || 'N/A'}
+              {purok || "N/A"}
             </span>
           </div>
           <div className="rounded-xl bg-white/80 p-3">
             <span className="block text-xs font-semibold text-slate-500">House no.</span>
             <span className="mt-1 block text-base font-bold text-[#0F172A]" data-testid="info-house">
-              {houseNumber || 'N/A'}
+              {houseNumber || "N/A"}
             </span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FiBookOpen, FiDroplet, FiFileText, FiGrid, FiMap, FiMessageSquare, FiUsers, FiX } from "react-icons/fi";
+import { FiBookOpen, FiCalendar, FiDroplet, FiFileText, FiGrid, FiMessageSquare, FiUsers, FiX } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router";
 import { MOCK_ROLE_STORAGE_KEY } from "../config/mockAuth";
 import { getCurrentAccount, logout } from "../services/auth.service";
@@ -25,7 +25,7 @@ const ROLE_CONFIG = {
       { label: "Consumers", path: "/admin/consumers", Icon: FiUsers },
       { label: "Readings", path: "/admin/readings", Icon: FiBookOpen },
       { label: "Billings", path: "/admin/billings", Icon: FiFileText },
-      { label: "Events", path: "/admin/events", Icon: FiMap },
+      { label: "Events", path: "/admin/events", Icon: FiCalendar },
       { label: "Announcements", path: "/admin/announcements", Icon: FiMessageSquare },
       { label: "Analytics", path: "/admin/analytics", Icon: FiGrid },
       
@@ -39,7 +39,6 @@ const ROLE_CONFIG = {
     homePath: "/meter-reader/readings-entry",
     links: [
       { label: "Readings Entry", path: "/meter-reader/readings-entry", Icon: FiBookOpen },
-      { label: "Consumer Directory", path: "/meter-reader/consumer-directory", Icon: FiUsers },
     ],
   },
   consumer: {
@@ -52,7 +51,6 @@ const ROLE_CONFIG = {
       { label: "Usage Metrics", path: "/consumer/usage-metrics", Icon: FiDroplet },
       { label: "Billing Ledger", path: "/consumer/billing-ledger", Icon: FiFileText },
       { label: "Profile Details", path: "/consumer/profile-details", Icon: FiUsers },
-      { label: "Analytics", path: "/admin/analytics", Icon: FiGrid },
     ],
   },
 };
@@ -176,7 +174,7 @@ export default function AppLayout({ children }) {
           userName={accountName || activeRoleConfig.userName}
         />
 
-        <main className="min-w-0 flex-1 pb-24 lg:pb-0">
+        <main className={`min-w-0 flex-1 pb-24 lg:pb-0 ${activeRole === "admin" ? "admin-auto-refresh" : ""}`}>
           <div className="h-full px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
             <div className="mx-auto max-w-7xl">
               <div className="mb-5 sm:mb-7">

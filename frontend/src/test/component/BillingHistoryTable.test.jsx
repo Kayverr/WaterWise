@@ -5,6 +5,8 @@ import BillingHistoryTable from '../../components/BillingHistoryTable';
 const mockHistory = [
   {
     invoiceNumber: 'INV-2026-001',
+    consumerName: 'Juan Dela Cruz',
+    purok: 'Purok 2',
     billingPeriod: 'April 2026',
     readingDate: '04/25/2026',
     cubicMetersConsumed: 22,
@@ -16,6 +18,8 @@ const mockHistory = [
   },
   {
     invoiceNumber: 'INV-2026-002',
+    consumerName: 'Maria Santos',
+    purok: 'Purok 3',
     billingPeriod: 'May 2026',
     readingDate: '05/25/2026',
     cubicMetersConsumed: 18,
@@ -36,11 +40,15 @@ describe('BillingHistoryTable', () => {
 
     // Row 1 Assertions
     const months = screen.getAllByTestId('row-month');
+    const consumerNames = screen.getAllByTestId('row-consumer-name');
+    const puroks = screen.getAllByTestId('row-purok');
     const readingDates = screen.getAllByTestId('row-reading-date');
     const consumptions = screen.getAllByTestId('row-consumption');
     const amounts = screen.getAllByTestId('row-amount-due');
     const statuses = screen.getAllByTestId('row-status');
 
+    expect(consumerNames[0].textContent).toBe('Juan Dela Cruz');
+    expect(puroks[0].textContent).toBe('Purok 2');
     expect(months[0].textContent).toBe('April 2026');
     expect(readingDates[0].textContent).toBe('04/25/2026');
     expect(consumptions[0].textContent).toBe('22 m³');
