@@ -58,7 +58,7 @@ function ReportGenerator({ onGenerated }) {
       if (onGenerated) {
         onGenerated();
       }
-    } catch (error) {
+    } catch {
       setError("Failed to generate report.");
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ function ReportGenerator({ onGenerated }) {
       document.body.removeChild(link);
 
       window.URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch {
       setError("Failed to download PDF.");
     }
   };
@@ -95,16 +95,17 @@ function ReportGenerator({ onGenerated }) {
     <div
       className="
 bg-white
-rounded-xl
-shadow
+rounded-3xl
+border border-slate-200/80
+shadow-[0_20px_60px_rgba(15,23,42,0.07)]
 p-6
 space-y-6
 "
     >
       <h2
         className="
-text-lg
-font-semibold
+text-2xl
+font-extrabold text-slate-900
 "
       >
         Generate Report
@@ -133,9 +134,9 @@ gap-4
           value={form.type}
           onChange={updateForm}
           className="
-border
-rounded-lg
-p-2
+border border-slate-200 bg-slate-50
+rounded-xl
+p-3 outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100
 "
         >
           <option value="consumption">Consumption Report</option>
@@ -153,9 +154,9 @@ p-2
           value={form.startDate}
           onChange={updateForm}
           className="
-border
-rounded-lg
-p-2
+border border-slate-200 bg-slate-50
+rounded-xl
+p-3 outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100
 "
         />
 
@@ -165,9 +166,9 @@ p-2
           value={form.endDate}
           onChange={updateForm}
           className="
-border
-rounded-lg
-p-2
+border border-slate-200 bg-slate-50
+rounded-xl
+p-3 outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-100
 "
         />
       </div>
@@ -216,11 +217,11 @@ gap-2
         onClick={handleGenerate}
         disabled={loading}
         className="
-bg-blue-600
+bg-sky-600 hover:bg-sky-700 shadow-lg shadow-sky-200
 text-white
 px-5
 py-2
-rounded-lg
+rounded-xl
 flex
 items-center
 gap-2
