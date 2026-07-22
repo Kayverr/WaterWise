@@ -22,7 +22,7 @@ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
 # Page snapshot
 
 ```yaml
-- generic [active] [ref=e1]:
+- generic [ref=e1]:
   - generic [ref=e3]:
     - banner [ref=e4]:
       - generic [ref=e5]:
@@ -35,148 +35,110 @@ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
           - generic [ref=e14]: consumer
           - button "Open system notifications" [ref=e15]:
             - img [ref=e16]
-            - generic [ref=e19]: "1"
-          - button "Open account menu" [ref=e21]:
-            - img [ref=e23]
-            - img [ref=e26]
-    - generic [ref=e28]:
-      - complementary [ref=e29]:
-        - generic [ref=e30]:
-          - navigation "Consumer navigation" [ref=e31]:
-            - list [ref=e32]:
-              - listitem [ref=e33]:
-                - link "Usage Metrics" [ref=e34] [cursor=pointer]:
+          - button "Open account menu" [ref=e20]:
+            - img [ref=e22]
+            - img [ref=e25]
+    - generic [ref=e27]:
+      - complementary [ref=e28]:
+        - generic [ref=e29]:
+          - navigation "Consumer navigation" [ref=e30]:
+            - list [ref=e31]:
+              - listitem [ref=e32]:
+                - link "Usage Metrics" [active] [ref=e33] [cursor=pointer]:
                   - /url: /consumer/usage-metrics
-                  - img [ref=e35]
-                  - generic [ref=e37]: Usage Metrics
-              - listitem [ref=e38]:
-                - link "Billing Ledger" [ref=e39] [cursor=pointer]:
+                  - img [ref=e34]
+                  - generic [ref=e36]: Usage Metrics
+              - listitem [ref=e37]:
+                - link "Billing Ledger" [ref=e38] [cursor=pointer]:
                   - /url: /consumer/billing-ledger
-                  - img [ref=e40]
-                  - generic [ref=e43]: Billing Ledger
-              - listitem [ref=e44]:
-                - link "Profile Details" [ref=e45] [cursor=pointer]:
+                  - img [ref=e39]
+                  - generic [ref=e42]: Billing Ledger
+              - listitem [ref=e43]:
+                - link "Profile Details" [ref=e44] [cursor=pointer]:
                   - /url: /consumer/profile-details
-                  - img [ref=e46]
-                  - generic [ref=e51]: Profile Details
-              - listitem [ref=e52]:
-                - link "Analytics" [ref=e53] [cursor=pointer]:
+                  - img [ref=e45]
+                  - generic [ref=e50]: Profile Details
+              - listitem [ref=e51]:
+                - link "Analytics" [ref=e52] [cursor=pointer]:
                   - /url: /admin/analytics
-                  - img [ref=e54]
-                  - generic [ref=e59]: Analytics
-          - generic [ref=e61]:
-            - img [ref=e63]
-            - generic [ref=e66]:
-              - paragraph [ref=e67]: Juan Dela Cruz
-              - paragraph [ref=e68]: Consumer
-      - main [ref=e69]:
-        - generic [ref=e71]:
-          - heading "Billing Ledger" [level=1] [ref=e73]
-          - generic [ref=e74]:
-            - generic [ref=e76]:
-              - generic [ref=e77]:
-                - generic [ref=e78]:
-                  - img [ref=e79]
-                  - generic [ref=e82]: Outstanding Balance
-                - heading "₱450.00" [level=2] [ref=e83]
-              - generic [ref=e84]:
-                - generic [ref=e85]:
-                  - img [ref=e86]
-                  - generic [ref=e88]: Upcoming Due Date
-                - paragraph [ref=e89]: July 25, 2026
-            - generic [ref=e90]:
-              - generic [ref=e91]:
-                - generic [ref=e92]:
-                  - paragraph [ref=e93]: Billing records
-                  - heading "Billing History" [level=3] [ref=e94]
-                - button "View Official Receipt" [ref=e95]
-              - table [ref=e97]:
-                - rowgroup [ref=e98]:
-                  - row "Billing Period Consumer Reading Date Consumption Amount Due Status Action" [ref=e99]:
-                    - columnheader "Billing Period" [ref=e100]
-                    - columnheader "Consumer" [ref=e101]
-                    - columnheader "Reading Date" [ref=e102]
-                    - columnheader "Consumption" [ref=e103]
-                    - columnheader "Amount Due" [ref=e104]
-                    - columnheader "Status" [ref=e105]
-                    - columnheader "Action" [ref=e106]
-                - rowgroup [ref=e107]:
-                  - row "June 2026 Iverene Grace M. Causapin 2026-06-30 24.5 m³ ₱450.00 Overdue Unavailable" [ref=e108]:
-                    - cell "June 2026" [ref=e109]
-                    - cell "Iverene Grace M. Causapin" [ref=e110]
-                    - cell "2026-06-30" [ref=e111]
-                    - cell "24.5 m³" [ref=e112]
-                    - cell "₱450.00" [ref=e113]
-                    - cell "Overdue" [ref=e114]:
-                      - generic [ref=e115]: Overdue
-                    - cell "Unavailable" [ref=e116]:
-                      - button "Unavailable" [disabled] [ref=e117]
-                  - row "May 2026 Iverene Grace M. Causapin 2026-05-31 22.1 m³ ₱390.00 Paid View Receipt" [ref=e118]:
-                    - cell "May 2026" [ref=e119]
-                    - cell "Iverene Grace M. Causapin" [ref=e120]
-                    - cell "2026-05-31" [ref=e121]
-                    - cell "22.1 m³" [ref=e122]
-                    - cell "₱390.00" [ref=e123]
-                    - cell "Paid" [ref=e124]:
-                      - generic [ref=e125]: Paid
-                    - cell "View Receipt" [ref=e126]:
-                      - button "View Receipt" [ref=e127]
-                  - row "April 2026 Iverene Grace M. Causapin 2026-04-30 21.4 m³ ₱370.00 Paid View Receipt" [ref=e128]:
-                    - cell "April 2026" [ref=e129]
-                    - cell "Iverene Grace M. Causapin" [ref=e130]
-                    - cell "2026-04-30" [ref=e131]
-                    - cell "21.4 m³" [ref=e132]
-                    - cell "₱370.00" [ref=e133]
-                    - cell "Paid" [ref=e134]:
-                      - generic [ref=e135]: Paid
-                    - cell "View Receipt" [ref=e136]:
-                      - button "View Receipt" [ref=e137]
-    - complementary "Notification center" [ref=e139]:
-      - generic [ref=e140]:
-        - generic [ref=e141]:
-          - paragraph [ref=e142]: Notification Center
-          - paragraph [ref=e143]: 1 unread alert
-        - button "Close notification center" [ref=e144]:
-          - img [ref=e145]
-      - generic [ref=e148]:
-        - heading "Updates for you" [level=3] [ref=e149]
-        - paragraph [ref=e150]: Bills and community notices in one place.
-        - generic [ref=e151]:
-          - generic [ref=e152]:
-            - heading "Account bills" [level=4] [ref=e153]
-            - generic [ref=e155] [cursor=pointer]:
-              - img [ref=e157]
-              - generic [ref=e160]:
-                - heading "New meter reading" [level=5] [ref=e161]
-                - paragraph [ref=e162]: Your June 2026 meter reading is now available.
-              - button "Delete New meter reading" [ref=e163]:
-                - img [ref=e164]
-          - generic [ref=e166]:
-            - heading "Community announcements" [level=4] [ref=e167]
-            - generic [ref=e169] [cursor=pointer]:
-              - img [ref=e171]
-              - generic [ref=e174]:
-                - heading "Distribution advisory" [level=5] [ref=e175]
-                - paragraph [ref=e176]: Purok 3 maintenance window is scheduled for field validation.
-              - button "Delete Distribution advisory" [ref=e177]:
-                - img [ref=e178]
-  - generic [ref=e180]: "0"
+                  - img [ref=e53]
+                  - generic [ref=e58]: Analytics
+          - generic [ref=e60]:
+            - img [ref=e62]
+            - generic [ref=e65]:
+              - paragraph [ref=e66]: Juan Dela Cruz
+              - paragraph [ref=e67]: Consumer
+      - main [ref=e68]:
+        - generic [ref=e70]:
+          - heading "Usage Metrics" [level=1] [ref=e72]
+          - generic [ref=e73]:
+            - alert [ref=e74]:
+              - generic [ref=e75]: Unauthorized.
+              - button "Try again" [ref=e76]
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - generic [ref=e79]:
+                  - heading "Current Balance" [level=3] [ref=e80]
+                  - paragraph [ref=e81]: Outstanding account total
+                - generic [ref=e82]:
+                  - generic [ref=e83]: ₱0.00
+                  - generic [ref=e84]: Active amount due
+              - generic [ref=e85]:
+                - text: Total Consumption
+                - heading "0 m³" [level=3] [ref=e86]
+              - generic [ref=e87]:
+                - text: Average Monthly Usage
+                - heading "0 m³" [level=3] [ref=e88]
+              - generic [ref=e89]:
+                - text: Highest Consumption Month
+                - heading "None" [level=3] [ref=e90]
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - generic [ref=e93]:
+                  - paragraph [ref=e94]: Usage trend
+                  - heading "Monthly consumption" [level=3] [ref=e95]
+                - generic [ref=e96]:
+                  - generic [ref=e97]: Volume (m³)
+                  - generic [ref=e98]:
+                    - generic [ref=e99]: Year
+                    - combobox "Year" [ref=e100]:
+                      - option "All" [selected]
+              - application [ref=e104]
+    - complementary "Notification center" [ref=e111]:
+      - generic [ref=e112]:
+        - generic [ref=e113]:
+          - paragraph [ref=e114]: Notification Center
+          - paragraph [ref=e115]: 0 unread alerts
+        - button "Close notification center" [ref=e116]:
+          - img [ref=e117]
+      - generic [ref=e120]:
+        - heading "Updates for you" [level=3] [ref=e121]
+        - paragraph [ref=e122]: Bills and community notices in one place.
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - heading "Account bills" [level=4] [ref=e125]
+            - generic [ref=e127] [cursor=pointer]:
+              - img [ref=e129]
+              - generic [ref=e132]:
+                - heading "New meter reading" [level=5] [ref=e133]
+                - paragraph [ref=e134]: Your June 2026 meter reading is now available.
+              - button "Delete New meter reading" [ref=e135]:
+                - img [ref=e136]
+          - generic [ref=e138]:
+            - heading "Community announcements" [level=4] [ref=e139]
+            - generic [ref=e141] [cursor=pointer]:
+              - img [ref=e143]
+              - generic [ref=e146]:
+                - heading "Distribution advisory" [level=5] [ref=e147]
+                - paragraph [ref=e148]: Purok 3 maintenance window is scheduled for field validation.
+              - button "Delete Distribution advisory" [ref=e149]:
+                - img [ref=e150]
+  - generic [ref=e152]: "0"
 ```
 
 # Test source
 
 ```ts
-  1   | import { expect, test } from "@playwright/test";
-  2   | 
-  3   | test.describe("Consumer portal end-to-end journey", () => {
-  4   |   test("signs in, reviews notifications, billing and receipts, then explores consumption charts", async ({
-  5   |     page,
-  6   |   }) => {
-  7   |     const pageErrors = [];
-  8   |     page.on("pageerror", (error) => pageErrors.push(error.message));
-  9   | 
-  10  |     const resetResponse = await page.request.post("/api/test/notifications/reset");
-  11  |     expect(resetResponse.status()).toBe(204);
   12  | 
   13  |     await page.goto("/login");
   14  |     await expect(
@@ -236,8 +198,7 @@ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
   68  |     await expect(billingNotification).toHaveAttribute("data-is-read", "true");
   69  |     await expect(page.getByTestId("unread-badge")).toHaveText("1");
   70  | 
-> 71  |     const announcementReadResponse = page.waitForResponse(
-      |                                           ^ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
+  71  |     const announcementReadResponse = page.waitForResponse(
   72  |       (response) =>
   73  |         response.url().endsWith("/api/notifications/2026002/read") &&
   74  |         response.request().method() === "PUT" &&
@@ -278,7 +239,8 @@ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
   109 |     await page.getByRole("button", { name: "Close official receipt" }).click();
   110 |     await expect(page).toHaveURL(/\/consumer\/billing-ledger$/);
   111 | 
-  112 |     const refreshedHistoryResponse = page.waitForResponse(
+> 112 |     const refreshedHistoryResponse = page.waitForResponse(
+      |                                           ^ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
   113 |       (response) =>
   114 |         response.url().endsWith("/api/consumption") && response.status() === 200,
   115 |     );
@@ -338,4 +300,6 @@ Error: page.waitForResponse: Test timeout of 30000ms exceeded.
   169 |     await expect(page.getByTestId("notification-card-2026001")).toBeVisible();
   170 |     expect(pageErrors).toEqual([]);
   171 |   });
+  172 | });
+  173 | 
 ```
